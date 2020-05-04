@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS "user";
+
+CREATE TABLE IF NOT EXISTS "user" (
+	id BIGSERIAL PRIMARY KEY,
+	username VARCHAR (50) UNIQUE NOT NULL,
+	first_name VARCHAR (50) NOT NULL,
+	last_name VARCHAR (50) NOT NULL,
+	email VARCHAR (50) UNIQUE NOT NULL,
+	bio VARCHAR (100),
+	about_me VARCHAR (250),
+	profile_pic VARCHAR (250),
+	reputations BIGINT DEFAULT 0,
+	is_deleted SMALLINT DEFAULT 0,
+	is_banned SMALLINT DEFAULT 0,
+	created_on TIMESTAMP DEFAULT (Now() AT TIME ZONE 'utc'),
+	last_login TIMESTAMP
+);
