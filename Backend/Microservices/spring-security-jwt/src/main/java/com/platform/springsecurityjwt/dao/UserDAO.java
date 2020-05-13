@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.platform.springsecurityjwt.models.User;
 
+@Repository
 public interface UserDAO extends JpaRepository<User, Long>{
 	@Query("select u from User u where username = ?1")
 	public User getUserByUserName(String username);
