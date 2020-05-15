@@ -1,14 +1,9 @@
 package com.example.profileservices.userprofileservices.models;
 
 import java.sql.Date;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -16,9 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Getter
-@Setter
-@ToString
 @Table(name="user",schema = "public" ,uniqueConstraints = {
 		@UniqueConstraint(columnNames = {"username"}),
 		@UniqueConstraint(columnNames= {"email"})
@@ -72,6 +64,15 @@ public class User {
 	
 	@Column(name= "last_login")
 	private Date lastLogin;
+
+	@OneToMany(mappedBy = "askedBy",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<Question> questions;
+
+	@OneToMany(mappedBy = "editedBy",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<Question> editedQuestions;
+
+	@OneToMany(mappedBy = "answeredBy",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<Answer> answers;
 	
 	public User() {
 	}
@@ -93,5 +94,153 @@ public class User {
 		this.isBanned = isBanned;
 		this.createdOn = createdOn;
 		this.lastLogin = lastLogin;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
+
+	public String getAboutMe() {
+		return aboutMe;
+	}
+
+	public void setAboutMe(String aboutMe) {
+		this.aboutMe = aboutMe;
+	}
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+
+	public Long getReputation() {
+		return reputation;
+	}
+
+	public void setReputation(Long reputation) {
+		this.reputation = reputation;
+	}
+
+	public Integer getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Integer isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public Integer getIsBanned() {
+		return isBanned;
+	}
+
+	public void setIsBanned(Integer isBanned) {
+		this.isBanned = isBanned;
+	}
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	public Set<Answer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(Set<Answer> answers) {
+		this.answers = answers;
+	}
+
+	public Set<Question> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(Set<Question> questions) {
+		this.questions = questions;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", email='" + email + '\'' +
+				", password='" + password + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", bio='" + bio + '\'' +
+				", aboutMe='" + aboutMe + '\'' +
+				", profilePic='" + profilePic + '\'' +
+				", reputation=" + reputation +
+				", isDeleted=" + isDeleted +
+				", isBanned=" + isBanned +
+				", createdOn=" + createdOn +
+				", lastLogin=" + lastLogin +
+				'}';
 	}
 }
