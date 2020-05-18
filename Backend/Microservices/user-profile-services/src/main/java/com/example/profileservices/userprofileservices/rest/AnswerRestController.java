@@ -83,7 +83,7 @@ public class AnswerRestController {
         catch (Exception e){
             throw new ApiRequestException("Cannot Delete Answer!!");
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.TEXT_PLAIN)
                 .body("success");
     }

@@ -22,4 +22,26 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, badRequest);
 
     }
+
+    @ExceptionHandler(value = {ApiResourceNotFound.class})
+    public ResponseEntity<Object> handleApiResourceNotFoundException(ApiResourceNotFound e){
+        //1.Create Payload containing exception details
+        HttpStatus badRequest = HttpStatus.NOT_FOUND;
+        ApiException apiException= new ApiException(e.getMessage(),
+                badRequest,
+                ZonedDateTime.now(ZoneId.of("Z")));
+        //2.Return ResponseEntity
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = {RuntimeException.class})
+    public ResponseEntity<Object> handleApiResourceNotFoundException(RuntimeException e){
+        //1.Create Payload containing exception details
+        HttpStatus badRequest = HttpStatus.INTERNAL_SERVER_ERROR;
+        ApiException apiException= new ApiException(e.getMessage(),
+                badRequest,
+                ZonedDateTime.now(ZoneId.of("Z")));
+        //2.Return ResponseEntity
+        return new ResponseEntity<>(apiException, badRequest);
+    }
 }

@@ -92,7 +92,7 @@ public class QuestionRestController {
 		catch (Exception e){
 			throw new ApiRequestException("Id Doesn't Exists.");
 		}
-		return ResponseEntity.status(HttpStatus.CREATED)
+		return ResponseEntity.status(HttpStatus.OK)
 				.contentType(MediaType.TEXT_PLAIN)
 				.body("success");
 	}
