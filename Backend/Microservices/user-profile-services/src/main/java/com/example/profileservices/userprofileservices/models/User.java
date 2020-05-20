@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -75,10 +77,16 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "answeredBy",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	private Set<Answer> answers;
 
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<AnswerUserKudo> answerUserKudos;
+
+	@OneToMany(mappedBy = "repliedBy", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<AnswerComment> comments;
 	
 	public User() {
+		this.reputation=Long.valueOf(0);
+		this.createdOn= new Date(System.currentTimeMillis());
+		this.lastLogin= new Date(System.currentTimeMillis());
 	}
 
 	public User(Long id, @NotBlank String username, @NotBlank String email, @NotBlank String password,
@@ -124,10 +132,12 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonSetter
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -212,16 +222,8 @@ public class User implements Serializable {
 		this.lastLogin = lastLogin;
 	}
 
-	public Set<Answer> getAnswers() {
-		return answers;
-	}
-
 	public void setAnswers(Set<Answer> answers) {
 		this.answers = answers;
-	}
-
-	public Set<Question> getQuestions() {
-		return questions;
 	}
 
 	public void setQuestions(Set<Question> questions) {
@@ -230,6 +232,10 @@ public class User implements Serializable {
 
 	public void setAnswerUserKudos(Set<AnswerUserKudo> answerUserKudos) {
 		this.answerUserKudos = answerUserKudos;
+	}
+
+	public void setComments(Set<AnswerComment> comments) {
+		this.comments = comments;
 	}
 
 	@Override

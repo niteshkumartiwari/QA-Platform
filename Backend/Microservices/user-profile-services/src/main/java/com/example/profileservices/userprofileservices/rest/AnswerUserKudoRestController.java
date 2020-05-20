@@ -52,10 +52,8 @@ public class AnswerUserKudoRestController {
                 .body("success");
     }
 
-    @DeleteMapping()
-    private ResponseEntity<String> deleteKudos(@RequestBody Map< String, Long > values){
-        Long answerId= values.get("ansId");
-        Long userId= values.get("usrId");
+    @DeleteMapping("/{answerId}/users/{userId}")
+    private ResponseEntity<String> deleteKudos(@PathVariable Long answerId, @PathVariable Long userId){
         try{
             theAnswerUserKudoService.deleteKudo(answerId,userId);
         }

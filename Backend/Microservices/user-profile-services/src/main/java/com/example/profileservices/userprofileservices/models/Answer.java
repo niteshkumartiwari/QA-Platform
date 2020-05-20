@@ -68,6 +68,9 @@ public class Answer implements Serializable {
     @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY)
     private Set<AnswerUserKudo> answerUserKudos;
 
+    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY)
+    private Set<AnswerComment> comments;
+
     public Answer() {
         this.isImage=0;
         this.viewCount= Long.valueOf(0);
@@ -202,8 +205,16 @@ public class Answer implements Serializable {
         this.usrId = usrId;
     }
 
+    public User getAnsweredBy() {
+        return answeredBy;
+    }
+
     public void setAnsweredBy(User answeredBy) {
         this.answeredBy = answeredBy;
+    }
+
+    public Question getQuestion() {
+        return question;
     }
 
     public void setQuestion(Question question) {
@@ -220,6 +231,10 @@ public class Answer implements Serializable {
 
     public void setAnswerUserKudos(Set<AnswerUserKudo> answerUserKudos) {
         this.answerUserKudos = answerUserKudos;
+    }
+
+    public void setComments(Set<AnswerComment> comments) {
+        this.comments = comments;
     }
 
     @Override

@@ -228,6 +228,14 @@ public class Question implements Serializable{
 		this.editedUid = editedUid;
 	}
 
+	public User getAskedBy() {
+		return askedBy;
+	}
+
+	public User getEditedBy() {
+		return editedBy;
+	}
+
 	@Override
 	public String toString() {
 		return "Question{" +
