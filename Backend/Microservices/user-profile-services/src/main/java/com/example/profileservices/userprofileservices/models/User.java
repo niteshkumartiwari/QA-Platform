@@ -1,5 +1,6 @@
 package com.example.profileservices.userprofileservices.models;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import lombok.ToString;
 		@UniqueConstraint(columnNames = {"username"}),
 		@UniqueConstraint(columnNames= {"email"})
 })
-public class User {
+public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -73,6 +74,9 @@ public class User {
 
 	@OneToMany(mappedBy = "answeredBy",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	private Set<Answer> answers;
+
+	@OneToMany(mappedBy = "user")
+	private Set<AnswerUserKudo> answerUserKudos;
 	
 	public User() {
 	}
@@ -224,6 +228,10 @@ public class User {
 		this.questions = questions;
 	}
 
+	public void setAnswerUserKudos(Set<AnswerUserKudo> answerUserKudos) {
+		this.answerUserKudos = answerUserKudos;
+	}
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -242,5 +250,14 @@ public class User {
 				", createdOn=" + createdOn +
 				", lastLogin=" + lastLogin +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+
+		User tmpUser= (User)obj;
+		return id == tmpUser.id;
 	}
 }

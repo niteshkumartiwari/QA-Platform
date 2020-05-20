@@ -3,6 +3,8 @@ package com.example.profileservices.userprofileservices.services;
 import com.example.profileservices.userprofileservices.dao.AnswerDAO;
 import com.example.profileservices.userprofileservices.dao.QuestionDAO;
 import com.example.profileservices.userprofileservices.dao.UserDAO;
+import com.example.profileservices.userprofileservices.exception.ApiException;
+import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,5 +57,15 @@ public class AnswerServiceImpl implements AnswerService{
     @Override
     public Answer findByQuestionIdAndUserId(Long questionId, Long userId) {
         return theAnswerDAO.findByQuestionIdAndAnsweredById(questionId,userId);
+    }
+
+    @Override
+    public Answer findById(Long id) {
+        try{
+            return theAnswerDAO.findById(id).get();
+        }
+        catch (Exception e){
+            throw new ApiRequestException("AnswerId Not Found");
+        }
     }
 }

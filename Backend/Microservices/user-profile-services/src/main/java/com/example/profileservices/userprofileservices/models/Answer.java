@@ -2,13 +2,15 @@ package com.example.profileservices.userprofileservices.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "answer",schema = "public",uniqueConstraints = {
         @UniqueConstraint(columnNames = {"question_id","answered_by"})
 })
-public class Answer {
+public class Answer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -62,6 +64,9 @@ public class Answer {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     private Question question;
+
+    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY)
+    private Set<AnswerUserKudo> answerUserKudos;
 
     public Answer() {
         this.isImage=0;
@@ -213,6 +218,10 @@ public class Answer {
         this.questId = questId;
     }
 
+    public void setAnswerUserKudos(Set<AnswerUserKudo> answerUserKudos) {
+        this.answerUserKudos = answerUserKudos;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
@@ -229,5 +238,14 @@ public class Answer {
                 ", modifiedAt=" + modifiedAt +
                 ", thumbnail='" + thumbnail + '\''+
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Answer tmpAnswer= (Answer)obj;
+        return id== tmpAnswer.id;
     }
 }

@@ -13,4 +13,5 @@ public interface AnswerService {
     void update(Answer theAnswer);
     void deleteById(Long Id);
     Answer findByQuestionIdAndUserId(Long questionId, Long userId);
+    Answer findById(Long id);
 }
