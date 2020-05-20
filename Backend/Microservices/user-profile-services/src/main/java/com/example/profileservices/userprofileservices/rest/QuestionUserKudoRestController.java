@@ -1,12 +1,9 @@
 package com.example.profileservices.userprofileservices.rest;
 
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
-import com.example.profileservices.userprofileservices.models.AnswerUserKudo;
-import com.example.profileservices.userprofileservices.services.AnswerUserKudoService;
-import com.example.profileservices.userprofileservices.util.retobjects.AnswerKudo;
-import com.example.profileservices.userprofileservices.util.retobjects.AnswerKudoWrapper;
-import com.example.profileservices.userprofileservices.util.retobjects.UserKudo;
-import com.example.profileservices.userprofileservices.util.retobjects.UserKudoWrapper;
+import com.example.profileservices.userprofileservices.models.QuestionUserKudo;
+import com.example.profileservices.userprofileservices.services.QuestionUserKudoService;
+import com.example.profileservices.userprofileservices.util.retobjects.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,32 +13,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/kudos/answers")
-public class AnswerUserKudoRestController {
+@RestController()
+@RequestMapping("/api/kudos/questions")
+public class QuestionUserKudoRestController {
     @Autowired
-    private AnswerUserKudoService theAnswerUserKudoService;
+    private QuestionUserKudoService theQuestionUserKudoService;
 
     @GetMapping("/{id}")
-    private UserKudoWrapper findByAnswerId(@PathVariable Long id){
-        List<UserKudo> result=theAnswerUserKudoService.findByAnswerId(id);
+    private UserKudoWrapper findByQuestionId(@PathVariable Long id){
+        List<UserKudo> result=theQuestionUserKudoService.findByQuestionId(id);
         UserKudoWrapper userKudoWrapper = new UserKudoWrapper();
         userKudoWrapper.setUserKudo(result);
         return userKudoWrapper;
     }
 
     @GetMapping("/users/{id}")
-    private AnswerKudoWrapper findByUserId(@PathVariable Long id){
-        List<AnswerKudo> result= theAnswerUserKudoService.findByUserId(id);
-        AnswerKudoWrapper answerKudoWrapper= new AnswerKudoWrapper();
-        answerKudoWrapper.setAnswerKudo(result);
-        return answerKudoWrapper;
+    private QuestionKudoWrapper findByUserId(@PathVariable Long id){
+        List<QuestionKudo> result= theQuestionUserKudoService.findByUserId(id);
+        QuestionKudoWrapper questionKudoWrapper= new QuestionKudoWrapper();
+        questionKudoWrapper.setQuestionKudos(result);
+        return questionKudoWrapper;
     }
 
     @PostMapping()
-    private ResponseEntity<String> addKudos(@RequestBody AnswerUserKudo theAnswerUserKudo){
+    private ResponseEntity<String> addKudos(@RequestBody QuestionUserKudo theQuestionUserKudo){
         try{
-            theAnswerUserKudoService.addKudo(theAnswerUserKudo);
+            theQuestionUserKudoService.addKudo(theQuestionUserKudo);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -54,10 +51,10 @@ public class AnswerUserKudoRestController {
 
     @DeleteMapping()
     private ResponseEntity<String> deleteKudos(@RequestBody Map< String, Long > values){
-        Long answerId= values.get("ansId");
+        Long questionId= values.get("quesId");
         Long userId= values.get("usrId");
         try{
-            theAnswerUserKudoService.deleteKudo(answerId,userId);
+            theQuestionUserKudoService.deleteKudo(questionId,userId);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());

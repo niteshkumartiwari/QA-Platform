@@ -52,14 +52,15 @@ public class AnswerUserKudoServiceImpl implements AnswerUserKudoService{
             answer.add(tempAnswerKudo);
         }
 
-        return answer;    }
+        return answer;
+    }
 
     @Override
     public void addKudo(AnswerUserKudo theAnswerUserKudo) {
         Long userId=theAnswerUserKudo.getUsrId();
         Long answerId=theAnswerUserKudo.getAnsId();
         AnswerUserKudoId answerUserKudoId= new AnswerUserKudoId(userId,answerId);
-       if(theAnswerUserKudoDAO.findById(answerUserKudoId).get() != null){
+       if(theAnswerUserKudoDAO.findById(answerUserKudoId).isPresent()){
            throw new ApiRequestException("User has already Upkudo this answer");
         }
 

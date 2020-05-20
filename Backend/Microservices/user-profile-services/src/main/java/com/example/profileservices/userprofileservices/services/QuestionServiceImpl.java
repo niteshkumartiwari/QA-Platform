@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.profileservices.userprofileservices.dao.UserDAO;
+import com.example.profileservices.userprofileservices.exception.ApiRequestException;
+import com.example.profileservices.userprofileservices.exception.ApiResourceNotFound;
 import com.example.profileservices.userprofileservices.models.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class QuestionServiceImpl implements QuestionService{
 			theQuestion= result.get();
 		}
 		else{
-			throw new Exception();
+			throw new ApiResourceNotFound("Question Id Not Found");
 		}
 
 		return  theQuestion;
