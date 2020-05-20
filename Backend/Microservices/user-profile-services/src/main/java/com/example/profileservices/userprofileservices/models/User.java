@@ -81,7 +81,10 @@ public class User implements Serializable {
 	private Set<AnswerUserKudo> answerUserKudos;
 
 	@OneToMany(mappedBy = "repliedBy", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-	private Set<AnswerComment> comments;
+	private Set<AnswerComment> ansComments;
+
+	@OneToMany(mappedBy = "repliedBy", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<QuestionComment> quesComments;
 	
 	public User() {
 		this.reputation=Long.valueOf(0);
@@ -235,7 +238,7 @@ public class User implements Serializable {
 	}
 
 	public void setComments(Set<AnswerComment> comments) {
-		this.comments = comments;
+		this.ansComments = comments;
 	}
 
 	@Override

@@ -73,6 +73,9 @@ public class Question implements Serializable{
 	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private Set<Answer> answers;
 
+	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	private Set<QuestionComment> comments;
+
 	public Question() {
 		this.isImage=0;
 		this.upKudos=Long.valueOf(0);
@@ -226,10 +229,6 @@ public class Question implements Serializable{
 
 	public void setEditedUid(Long editedUid) {
 		this.editedUid = editedUid;
-	}
-
-	public User getAskedBy() {
-		return askedBy;
 	}
 
 	public User getEditedBy() {

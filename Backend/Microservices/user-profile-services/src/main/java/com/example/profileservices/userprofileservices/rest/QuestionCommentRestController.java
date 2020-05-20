@@ -1,9 +1,8 @@
 package com.example.profileservices.userprofileservices.rest;
 
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
-import com.example.profileservices.userprofileservices.exception.ApiResourceNotFound;
-import com.example.profileservices.userprofileservices.models.AnswerComment;
-import com.example.profileservices.userprofileservices.services.AnswerCommentService;
+import com.example.profileservices.userprofileservices.models.QuestionComment;
+import com.example.profileservices.userprofileservices.services.QuestionCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,15 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/answers")
-public class AnswerCommentRestController {
+@RequestMapping("/api/questions")
+public class QuestionCommentRestController {
     @Autowired
-    private AnswerCommentService theAnswerCommentService;
+    private QuestionCommentService theQuestionCommentService;
 
-    @GetMapping("/{ansId}/comments")
-    private List<AnswerComment> findByAnswerId(@PathVariable Long ansId){
+    @GetMapping("/{quesId}/comments")
+    private List<QuestionComment> findByQuestionId(@PathVariable Long quesId){
         try{
-            return theAnswerCommentService.findByAnswerId(ansId);
+            return theQuestionCommentService.findByQuestionId(quesId);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -29,9 +28,9 @@ public class AnswerCommentRestController {
     }
 
     @GetMapping("/comments/users/{userId}")
-    private List<AnswerComment> findByRepliedBy(@PathVariable Long userId){
+    private List<QuestionComment> findByRepliedBy(@PathVariable Long userId){
         try{
-            return theAnswerCommentService.findByRepliedById(userId);
+            return theQuestionCommentService.findByRepliedById(userId);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -39,9 +38,9 @@ public class AnswerCommentRestController {
     }
 
     @PostMapping("/comments")
-    private ResponseEntity<String> addComment(@RequestBody AnswerComment answerComment){
+    private ResponseEntity<String> addComment(@RequestBody QuestionComment questionComment){
         try{
-            theAnswerCommentService.addComment(answerComment);
+            theQuestionCommentService.addComment(questionComment);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -53,9 +52,9 @@ public class AnswerCommentRestController {
     }
 
     @PutMapping("/comments")
-    private ResponseEntity<String> updateComment(@RequestBody AnswerComment answerComment){
+    private ResponseEntity<String> updateComment(@RequestBody QuestionComment questionComment){
         try{
-            theAnswerCommentService.updateComment(answerComment);
+            theQuestionCommentService.updateComment(questionComment);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -69,7 +68,7 @@ public class AnswerCommentRestController {
     @DeleteMapping("/comments/{commentId}")
     private ResponseEntity<String> deleteComment(@PathVariable Long commentId){
         try{
-            theAnswerCommentService.deleteComment(commentId);
+            theQuestionCommentService.deleteComment(commentId);
         }
         catch (Exception e){
             throw new ApiRequestException("Comment Id Doesn't Exists.");
