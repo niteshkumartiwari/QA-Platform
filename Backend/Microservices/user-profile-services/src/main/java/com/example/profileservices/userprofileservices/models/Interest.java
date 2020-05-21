@@ -23,6 +23,9 @@ public class Interest implements Serializable {
     @OneToMany(mappedBy = "interest",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<QuestionInterest>  questionInterests;
 
+    @OneToMany(mappedBy = "interest",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Set<UserInterest>  userInterests;
+
     public Interest() {
         this.isDeleted=0;
     }
