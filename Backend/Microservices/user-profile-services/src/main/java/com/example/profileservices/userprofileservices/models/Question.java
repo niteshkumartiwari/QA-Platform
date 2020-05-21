@@ -79,6 +79,9 @@ public class Question implements Serializable{
 	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	private Set<QuestionSeen> seens;
 
+	@OneToMany(mappedBy = "question",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	private Set<QuestionFollower> questionFollowers;
+
 	public Question() {
 		this.isImage=0;
 		this.upKudos=Long.valueOf(0);
