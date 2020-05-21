@@ -1,9 +1,8 @@
-package com.example.profileservices.userprofileservices.util.retobjects;
+package com.example.profileservices.userprofileservices.util.response;
 
 import java.util.Date;
-import java.util.List;
 
-public class UserKudo {
+public class UserDateResponse {
     Long userId;
     Date createdOn;
 

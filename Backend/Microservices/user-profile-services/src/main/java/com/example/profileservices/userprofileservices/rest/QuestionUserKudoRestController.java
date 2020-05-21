@@ -3,7 +3,7 @@ package com.example.profileservices.userprofileservices.rest;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.QuestionUserKudo;
 import com.example.profileservices.userprofileservices.services.QuestionUserKudoService;
-import com.example.profileservices.userprofileservices.util.retobjects.*;
+import com.example.profileservices.userprofileservices.util.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController()
 @RequestMapping("/api/kudos/questions")
@@ -20,19 +19,19 @@ public class QuestionUserKudoRestController {
     private QuestionUserKudoService theQuestionUserKudoService;
 
     @GetMapping("/{id}")
-    private UserKudoWrapper findByQuestionId(@PathVariable Long id){
-        List<UserKudo> result=theQuestionUserKudoService.findByQuestionId(id);
-        UserKudoWrapper userKudoWrapper = new UserKudoWrapper();
-        userKudoWrapper.setUserKudo(result);
-        return userKudoWrapper;
+    private UserDateResponseWrapper findByQuestionId(@PathVariable Long id){
+        List<UserDateResponse> result=theQuestionUserKudoService.findByQuestionId(id);
+        UserDateResponseWrapper userDateResponseWrapper = new UserDateResponseWrapper();
+        userDateResponseWrapper.setUserDateResponse(result);
+        return userDateResponseWrapper;
     }
 
     @GetMapping("/users/{id}")
-    private QuestionKudoWrapper findByUserId(@PathVariable Long id){
-        List<QuestionKudo> result= theQuestionUserKudoService.findByUserId(id);
-        QuestionKudoWrapper questionKudoWrapper= new QuestionKudoWrapper();
-        questionKudoWrapper.setQuestionKudos(result);
-        return questionKudoWrapper;
+    private QuestionDateResponseWrapper findByUserId(@PathVariable Long id){
+        List<QuestionDateResponse> result= theQuestionUserKudoService.findByUserId(id);
+        QuestionDateResponseWrapper questionDateResponseWrapper = new QuestionDateResponseWrapper();
+        questionDateResponseWrapper.setQuestionDateResponses(result);
+        return questionDateResponseWrapper;
     }
 
     @PostMapping()

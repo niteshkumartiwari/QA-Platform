@@ -65,11 +65,14 @@ public class Answer implements Serializable {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<AnswerUserKudo> answerUserKudos;
 
-    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<AnswerComment> comments;
+
+    @OneToMany(mappedBy = "answer",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Set<AnswerSeen> seenUsers;
 
     public Answer() {
         this.isImage=0;

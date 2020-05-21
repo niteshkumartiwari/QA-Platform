@@ -2,14 +2,10 @@ package com.example.profileservices.userprofileservices.services;
 
 import com.example.profileservices.userprofileservices.dao.QuestionUserKudoDAO;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
-import com.example.profileservices.userprofileservices.models.AnswerUserKudo;
-import com.example.profileservices.userprofileservices.models.Id.AnswerUserKudoId;
 import com.example.profileservices.userprofileservices.models.Id.QuestionUserKudoId;
-import com.example.profileservices.userprofileservices.models.Question;
 import com.example.profileservices.userprofileservices.models.QuestionUserKudo;
-import com.example.profileservices.userprofileservices.util.retobjects.AnswerKudo;
-import com.example.profileservices.userprofileservices.util.retobjects.QuestionKudo;
-import com.example.profileservices.userprofileservices.util.retobjects.UserKudo;
+import com.example.profileservices.userprofileservices.util.response.QuestionDateResponse;
+import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,26 +26,26 @@ public class QuestionUserKudoServiceImpl implements QuestionUserKudoService{
     }
 
     @Override
-    public List<UserKudo> findByQuestionId(Long questionId) {
+    public List<UserDateResponse> findByQuestionId(Long questionId) {
         List<QuestionUserKudo> result= theQuestionUserKudoDAO.findByQuestionId(questionId);
-        List<UserKudo> userQues= new ArrayList<>();
+        List<UserDateResponse> userQues= new ArrayList<>();
 
         for(QuestionUserKudo theQuestionUserKudo: result){
-            UserKudo tempUserKudo= new UserKudo();
-            tempUserKudo.setUserId(theQuestionUserKudo.getUser().getId());
-            tempUserKudo.setCreatedOn(theQuestionUserKudo.getCreatedOn());
+            UserDateResponse tempUserDateResponse = new UserDateResponse();
+            tempUserDateResponse.setUserId(theQuestionUserKudo.getUser().getId());
+            tempUserDateResponse.setCreatedOn(theQuestionUserKudo.getCreatedOn());
 
-            userQues.add(tempUserKudo);
+            userQues.add(tempUserDateResponse);
         }
         return userQues;
     }
 
     @Override
-    public List<QuestionKudo> findByUserId(Long userId) {
+    public List<QuestionDateResponse> findByUserId(Long userId) {
         List<QuestionUserKudo> result= theQuestionUserKudoDAO.findByUserId(userId);
-        List<QuestionKudo> question= new ArrayList<>();
+        List<QuestionDateResponse> question= new ArrayList<>();
         for(QuestionUserKudo answerUserKudo: result){
-            QuestionKudo tempAnswerKudo=new QuestionKudo();
+            QuestionDateResponse tempAnswerKudo=new QuestionDateResponse();
             tempAnswerKudo.setQuestionId(answerUserKudo.getQuestion().getId());
             tempAnswerKudo.setCreatedOn(answerUserKudo.getCreatedOn());
 

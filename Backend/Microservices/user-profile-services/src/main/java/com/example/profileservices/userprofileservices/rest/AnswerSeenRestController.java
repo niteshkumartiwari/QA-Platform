@@ -1,8 +1,8 @@
 package com.example.profileservices.userprofileservices.rest;
 
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
-import com.example.profileservices.userprofileservices.models.AnswerUserKudo;
-import com.example.profileservices.userprofileservices.services.AnswerUserKudoService;
+import com.example.profileservices.userprofileservices.models.AnswerSeen;
+import com.example.profileservices.userprofileservices.services.AnswerSeenService;
 import com.example.profileservices.userprofileservices.util.response.AnswerDateResponse;
 import com.example.profileservices.userprofileservices.util.response.AnswerDateResponseWrapper;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
@@ -16,14 +16,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/kudos/answers")
-public class AnswerUserKudoRestController {
+@RequestMapping("/api/seen/answers")
+public class AnswerSeenRestController {
     @Autowired
-    private AnswerUserKudoService theAnswerUserKudoService;
+    private AnswerSeenService theAnswerSeenService;
 
     @GetMapping("/{id}")
     private UserDateResponseWrapper findByAnswerId(@PathVariable Long id){
-        List<UserDateResponse> result=theAnswerUserKudoService.findByAnswerId(id);
+        List<UserDateResponse> result;
+        try{
+            result=theAnswerSeenService.findByAnswerId(id);
+        }
+        catch (Exception e){
+            throw new ApiRequestException(e.getMessage());
+        }
         UserDateResponseWrapper userDateResponseWrapper = new UserDateResponseWrapper();
         userDateResponseWrapper.setUserDateResponse(result);
         return userDateResponseWrapper;
@@ -31,16 +37,22 @@ public class AnswerUserKudoRestController {
 
     @GetMapping("/users/{id}")
     private AnswerDateResponseWrapper findByUserId(@PathVariable Long id){
-        List<AnswerDateResponse> result= theAnswerUserKudoService.findByUserId(id);
+        List<AnswerDateResponse> result;
+        try{
+            result= theAnswerSeenService.findByUserId(id);
+        }
+        catch (Exception e){
+            throw new ApiRequestException(e.getMessage());
+        }
         AnswerDateResponseWrapper answerDateResponseWrapper = new AnswerDateResponseWrapper();
         answerDateResponseWrapper.setAnswerDateResponse(result);
         return answerDateResponseWrapper;
     }
 
     @PostMapping()
-    private ResponseEntity<String> addKudos(@RequestBody AnswerUserKudo theAnswerUserKudo){
+    private ResponseEntity<String> addSeen(@RequestBody AnswerSeen theAnswerSeen){
         try{
-            theAnswerUserKudoService.addKudo(theAnswerUserKudo);
+            theAnswerSeenService.addSeen(theAnswerSeen);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
@@ -52,9 +64,9 @@ public class AnswerUserKudoRestController {
     }
 
     @DeleteMapping("/{answerId}/users/{userId}")
-    private ResponseEntity<String> deleteKudos(@PathVariable Long answerId, @PathVariable Long userId){
+    private ResponseEntity<String> deleteSeen(@PathVariable Long answerId, @PathVariable Long userId){
         try{
-            theAnswerUserKudoService.deleteKudo(answerId,userId);
+            theAnswerSeenService.deleteSeen(answerId,userId);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());

@@ -1,9 +1,9 @@
 package com.example.profileservices.userprofileservices.services;
 
-import com.example.profileservices.userprofileservices.dao.AnswerUserKudoDAO;
+import com.example.profileservices.userprofileservices.dao.AnswerSeenDAO;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
-import com.example.profileservices.userprofileservices.models.AnswerUserKudo;
-import com.example.profileservices.userprofileservices.models.Id.AnswerUserKudoId;
+import com.example.profileservices.userprofileservices.models.AnswerSeen;
+import com.example.profileservices.userprofileservices.models.Id.AnswerSeenId;
 import com.example.profileservices.userprofileservices.util.response.AnswerDateResponse;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +13,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AnswerUserKudoServiceImpl implements AnswerUserKudoService{
-    private AnswerUserKudoDAO theAnswerUserKudoDAO;
+public class AnswerSeenServiceImpl implements AnswerSeenService{
+    private AnswerSeenDAO theAnswerSeenDAO;
     private AnswerService theAnswerService;
     private UserService theUserService;
 
     @Autowired
-    public AnswerUserKudoServiceImpl(AnswerUserKudoDAO theAnswerUserKudoDAO, AnswerService theAnswerService, UserService theUserService) {
-        this.theAnswerUserKudoDAO = theAnswerUserKudoDAO;
+    public AnswerSeenServiceImpl(AnswerSeenDAO theAnswerSeenDAO, AnswerService theAnswerService, UserService theUserService) {
+        this.theAnswerSeenDAO = theAnswerSeenDAO;
         this.theAnswerService = theAnswerService;
         this.theUserService = theUserService;
     }
 
     @Override
     public List<UserDateResponse> findByAnswerId(Long answerId) {
-        List<AnswerUserKudo> result= theAnswerUserKudoDAO.findByAnswerId(answerId);
+        List<AnswerSeen> result;
+        try{
+           result = theAnswerSeenDAO.findByAnswerId(answerId);
+        }
+        catch (Exception e){
+            throw new ApiRequestException(e.getMessage());
+        }
         List<UserDateResponse> userAns= new ArrayList<>();
-        for(AnswerUserKudo val: result){
+        for(AnswerSeen val: result){
             UserDateResponse tempUserDateResponse = new UserDateResponse();
             tempUserDateResponse.setUserId(val.getUser().getId());
             tempUserDateResponse.setCreatedOn(val.getCreatedOn());
@@ -42,9 +48,15 @@ public class AnswerUserKudoServiceImpl implements AnswerUserKudoService{
 
     @Override
     public List<AnswerDateResponse> findByUserId(Long userId) {
-        List<AnswerUserKudo> result= theAnswerUserKudoDAO.findByUserId(userId);
+        List<AnswerSeen> result;
+        try{
+            result= theAnswerSeenDAO.findByUserId(userId);
+        }
+        catch (Exception e){
+            throw new ApiRequestException(e.getMessage());
+        }
         List<AnswerDateResponse> answer= new ArrayList<>();
-        for(AnswerUserKudo answerUserKudo: result){
+        for(AnswerSeen answerUserKudo: result){
             AnswerDateResponse tempAnswerDateResponse =new AnswerDateResponse();
             tempAnswerDateResponse.setAnswerId(answerUserKudo.getAnswer().getId());
             tempAnswerDateResponse.setCreatedOn(answerUserKudo.getCreatedOn());
@@ -56,31 +68,31 @@ public class AnswerUserKudoServiceImpl implements AnswerUserKudoService{
     }
 
     @Override
-    public void addKudo(AnswerUserKudo theAnswerUserKudo) {
-        Long userId=theAnswerUserKudo.getUsrId();
-        Long answerId=theAnswerUserKudo.getAnsId();
-        AnswerUserKudoId answerUserKudoId= new AnswerUserKudoId(userId,answerId);
-       if(theAnswerUserKudoDAO.findById(answerUserKudoId).isPresent()){
-           throw new ApiRequestException("User has already Upkudo this answer");
+    public void addSeen(AnswerSeen theAnswerSeen) {
+        Long userId=theAnswerSeen.getUsrId();
+        Long answerId=theAnswerSeen.getAnsId();
+        AnswerSeenId answerSeenId= new AnswerSeenId(userId,answerId);
+        if(theAnswerSeenDAO.findById(answerSeenId).isPresent()){
+            throw new ApiRequestException("User has already seen this answer");
         }
 
         try {
-            theAnswerUserKudo.setAnswer(theAnswerService.findById(answerId));
-            theAnswerUserKudo.setUser(theUserService.findById(userId));
+            theAnswerSeen.setAnswer(theAnswerService.findById(answerId));
+            theAnswerSeen.setUser(theUserService.findById(userId));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
 
-        theAnswerUserKudo.setId(answerUserKudoId);
-        theAnswerUserKudoDAO.save(theAnswerUserKudo);
+        theAnswerSeen.setId(answerSeenId);
+        theAnswerSeenDAO.save(theAnswerSeen);
     }
 
     @Override
-    public void deleteKudo(Long answerId,Long userId) {
-        AnswerUserKudoId theAnswerUserKudoId= new AnswerUserKudoId(userId,answerId);
+    public void deleteSeen(Long answerId, Long userId) {
+        AnswerSeenId answerSeenId= new AnswerSeenId(userId,answerId);
         try{
-            theAnswerUserKudoDAO.deleteById(theAnswerUserKudoId);
+            theAnswerSeenDAO.deleteById(answerSeenId);
         }
         catch (Exception e){
             throw new ApiRequestException("Bad Combination of userid and answerid.");
