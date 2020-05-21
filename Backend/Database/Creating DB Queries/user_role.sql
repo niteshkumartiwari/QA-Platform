@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS user_role;
+
+CREATE TABLE IF NOT EXISTS user_role (
+	user_id BIGINT NOT NULL,
+	role_id BIGINT NOT NULL,
+	PRIMARY KEY (user_id, role_id),
+	CONSTRAINT user_role_user_id_fkey FOREIGN KEY (user_id)
+		REFERENCES "user" (id) MATCH SIMPLE
+		ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT user_role_role_id_fkey FOREIGN KEY (role_id)
+		REFERENCES role (id) MATCH SIMPLE
+		ON UPDATE NO ACTION ON DELETE NO ACTION
+);
