@@ -2,6 +2,7 @@ package com.example.profileservices.userprofileservices.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "role",schema = "public",uniqueConstraints = {
@@ -15,6 +16,9 @@ public class Role implements Serializable {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Set<UserRole> userRoles;
 
     public Role() {
     }

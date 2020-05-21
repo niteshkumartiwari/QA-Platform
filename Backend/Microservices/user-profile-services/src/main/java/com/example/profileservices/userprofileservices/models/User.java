@@ -97,6 +97,9 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	private Set<UserInterest> userInterests;
+
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<UserRole> userRoles;
 	
 	public User() {
 		this.reputation=Long.valueOf(0);
