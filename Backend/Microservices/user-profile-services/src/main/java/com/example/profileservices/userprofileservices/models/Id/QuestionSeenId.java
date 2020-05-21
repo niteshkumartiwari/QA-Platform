@@ -5,17 +5,17 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class QuestionUserKudoId implements Serializable {
+public class QuestionSeenId implements Serializable {
     @Column(name= "user_id")
     private Long userId;
 
     @Column(name = "question_id")
     private Long questionId;
 
-    public QuestionUserKudoId() {
+    public QuestionSeenId() {
     }
 
-    public QuestionUserKudoId(Long userId, Long questionId) {
+    public QuestionSeenId(Long userId, Long questionId) {
         this.userId = userId;
         this.questionId = questionId;
     }
@@ -38,7 +38,7 @@ public class QuestionUserKudoId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        QuestionUserKudoId answerUserKudoId= (QuestionUserKudoId) obj;
-        return ((QuestionUserKudoId) obj).getQuestionId()==questionId && ((QuestionUserKudoId) obj).userId==userId;
+        QuestionSeenId questionSeenId= (QuestionSeenId) obj;
+        return questionSeenId.getUserId()==userId && questionSeenId.getQuestionId()==questionId;
     }
 }

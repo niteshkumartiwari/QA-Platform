@@ -56,10 +56,10 @@ public class AnswerSeenServiceImpl implements AnswerSeenService{
             throw new ApiRequestException(e.getMessage());
         }
         List<AnswerDateResponse> answer= new ArrayList<>();
-        for(AnswerSeen answerUserKudo: result){
+        for(AnswerSeen answerSeen: result){
             AnswerDateResponse tempAnswerDateResponse =new AnswerDateResponse();
-            tempAnswerDateResponse.setAnswerId(answerUserKudo.getAnswer().getId());
-            tempAnswerDateResponse.setCreatedOn(answerUserKudo.getCreatedOn());
+            tempAnswerDateResponse.setAnswerId(answerSeen.getAnswer().getId());
+            tempAnswerDateResponse.setCreatedOn(answerSeen.getCreatedOn());
 
             answer.add(tempAnswerDateResponse);
         }
