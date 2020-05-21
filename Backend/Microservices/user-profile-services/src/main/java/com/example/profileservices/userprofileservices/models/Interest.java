@@ -2,6 +2,7 @@ package com.example.profileservices.userprofileservices.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "interest",schema = "public",uniqueConstraints = {
@@ -18,6 +19,9 @@ public class Interest implements Serializable {
 
     @Column(name = "is_deleted")
     private Short isDeleted;
+
+    @OneToMany(mappedBy = "interest",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Set<QuestionInterest>  questionInterests;
 
     public Interest() {
         this.isDeleted=0;
