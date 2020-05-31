@@ -1,0 +1,6 @@
+mvn -DDB_SERVER=localhost -DPOSTGRES_DB=Platform -DPOSTGRES_USER=postgres -DPOSTGRES_PASSWORD=okdone12 install
+
+docker build -f Dockerfile -t authservice .
+docker tag #TAGNO myuser/authservice:latest
+
+docker-compose -f docker-compose.yml up

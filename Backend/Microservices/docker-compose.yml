@@ -1,0 +1,30 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - DB_SERVER=db
+      - POSTGRES_DB=Platform
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=okdone12
+  db:
+    container_name: db
+    image: postgres:9.5
+    volumes:
+      - sample_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=okdone12
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=Platform
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+
+volumes:
+  sample_db: {}
