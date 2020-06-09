@@ -1,0 +1,12 @@
+## Cmd for dumping specific tables from postgres
+
+### Schema-only
+pg_dump -d Platform -U postgres -b -v --column-inserts -s -t user -t user_role -t role -t people_follower -t user_interest_reputation -t interest > authDBSchema.sql 
+
+### Data-only
+pg_dump -d Platform -U postgres -b -v --column-inserts -a -t user -t user_role -t role -t people_follower -t user_interest_reputation -t interest > authDBData.sql
+
+
+pg_dump -d Platform -U postgres -b -v --column-inserts -s -t answer -t answer_user_kudo -t comment_answer -t seen_answer -t question -t seen_question -t question_user_kudo -t comment_question -t question_follower -t question_interest > qaDBSchema.sql 
+
+pg_dump -d Platform -U postgres -b -v --column-inserts -a -t answer -t answer_user_kudo -t comment_answer -t seen_answer -t question -t seen_question -t question_user_kudo -t comment_question -t question_follower -t question_interest > qaDBData.sql

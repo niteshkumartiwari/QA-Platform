@@ -1,0 +1,24 @@
+p1058298899637-y4v74l@gcp-sa-cloud-sql.iam.gserviceaccount.com
+
+Get-Content .\1-authDBData.sql | Set-Content -Encoding utf8 1-authDBData-utf8.sql
+1. remove owner
+
+gcloud container clusters create qaplatform-cluster --zone us-central1-f \
+--machine-type=n1-standard-2  --enable-autorepair \
+--enable-autoscaling --max-nodes=10 --min-nodes=1
+
+gcloud container clusters get-credentials qaplatform-cluster \
+--zone us-central1-f
+
+gcloud projects add-iam-policy-binding stone-timing-278916 --member \
+serviceAccount:proxy-user@stone-timing-278916.iam.gserviceaccount.com --role roles/cloudsql.client
+
+gcloud iam service-accounts keys create key.json --iam-account proxy-user@stone-timing-278916.iam.gserviceaccount.com
+
+kubectl create secret generic cloudsql-instance-credentials \
+--from-file=credentials.json=../key.json
+
+kubectl create secret generic cloudsql-db-credentials \
+    --from-literal=username=postgres \
+    --from-literal=password=okdone12 \
+    --from-literal=dbname=[DB_NAME]
