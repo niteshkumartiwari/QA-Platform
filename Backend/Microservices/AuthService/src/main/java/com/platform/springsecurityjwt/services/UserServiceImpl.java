@@ -1,6 +1,7 @@
 package com.platform.springsecurityjwt.services;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.platform.springsecurityjwt.exception.ApiRequestException;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.platform.springsecurityjwt.dao.UserDAO;
@@ -17,6 +20,9 @@ import com.platform.springsecurityjwt.models.User;
 public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserDAO userDAO;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public User findUserByUsername(String username) throws Exception {
@@ -43,5 +49,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw new ApiRequestException("UserId Not Found.");
 		}
 	}
-	
+
+	@Override
+	public User createUser(User theUser) {
+		if(theUser.getPassword().isBlank())
+			throw new ApiRequestException("Password is Empty");
+
+		theUser.setPassword(passwordEncoder.encode(theUser.getPassword()));
+		User newUser=userDAO.save(theUser);
+		return newUser;
+	}
+
+	@Override
+	public List<User> getAllUser(List<Long> userIds) {
+		List<User> userList= new ArrayList<>();
+		for(Long userId: userIds){
+			Optional result= userDAO.findById(userId);
+
+			if(result.isPresent())
+				userList.add((User)result.get());
+		}
+
+		return userList;
+	}
+
 }

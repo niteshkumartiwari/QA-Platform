@@ -67,6 +67,13 @@ public class User {
 	private Date lastLogin;
 	
 	public User() {
+		this.bio="";
+		this.aboutMe="";
+		this.reputation=Long.valueOf(0);
+		this.isBanned=0;
+		this.isDeleted=0;
+		this.lastLogin= new Date(System.currentTimeMillis());
+		this.createdOn= new Date(System.currentTimeMillis());
 	}
 
 	public User(Long id, @NotBlank String username, @NotBlank String email, @NotBlank String password,

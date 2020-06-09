@@ -1,6 +1,32 @@
 mvn -DDB_SERVER=localhost -DPOSTGRES_DB=Platform -DPOSTGRES_USER=postgres -DPOSTGRES_PASSWORD=okdone12 install
 
+cd d:/Github/QA\ Platform/Backend/Microservices/AuthService/
+
 docker build -f Dockerfile -t authservice .
-docker tag #TAGNO myuser/authservice:latest
 
 docker-compose -f docker-compose.yml up
+
+gcloud auth activate-service-account 1058298899637-compute@developer.gserviceaccount.com --key-file= FILE.json
+
+gcloud auth configure-docker
+
+kubectl delete deployment authservice
+
+kubectl create secret generic cloudsql-pgsql-credentials \
+    --from-literal=username=postgres \
+    --from-literal=password=okdone12 \
+    --from-literal=dbname=Platform
+
+kubectl create secret generic cloudsql-db-credentials \
+--from-file=credentials.json=./key.json
+
+kubectl describe pod auth
+
+./cloud_sql_proxy -instances=stone-timing-278916:us-central1-f:memegen-db=tcp:5432 -credential_file=key.json &
+
+kubectl create -f authDeploy.yaml
+
+kubectl expose deployment authservice --type "LoadBalancer" --port 80 --target-port 8080
+
+
+https://10.15.243.139:80
