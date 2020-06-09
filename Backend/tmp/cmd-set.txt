@@ -28,5 +28,4 @@ kubectl create -f authDeploy.yaml
 
 kubectl expose deployment authservice --type "LoadBalancer" --port 80 --target-port 8080
 
-
-https://10.15.243.139:80
+http://35.202.126.171:80/swagger-ui.html
