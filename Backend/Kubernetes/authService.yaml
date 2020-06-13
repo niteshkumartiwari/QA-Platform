@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: authserviceblock
+  labels:
+    app: authserviceblock
+    service: authserviceblock
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: authserviceblock
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: qaplatform-authserviceblock
+  labels:
+    account: authserviceblock
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authserviceblock-v1
+  labels:
+    app: authserviceblock
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authserviceblock
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: authserviceblock
+        version: v1
+    spec:
+      serviceAccountName: qaplatform-authserviceblock
+      containers:
+      - name: authserviceblock
+        image: gcr.io/stone-timing-278916/authservice
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+
