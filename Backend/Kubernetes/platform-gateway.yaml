@@ -25,23 +25,7 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /authenticate
-    - uri:
-        prefix: /hello
-    - uri:
-        prefix: /register
-    - uri:
-        prefix: /api/user
-    - uri:
-        prefix: /api/users
-    - uri:
-        prefix: register
-    - uri:
-        prefix: /api/interests
-    - uri:
-        prefix: /api/people
-    - uri:
-        prefix: /api/roles
+        prefix: /userservice
     route:
     - destination:
         host: authservice
@@ -49,15 +33,7 @@ spec:
           number: 8080
   - match:
     - uri:
-        prefix: /api/answers
-    - uri:
-        prefix: /api/seen
-    - uri:
-        prefix: /api/kudos
-    - uri:
-        prefix: /api/questions
-    - uri:
-        prefix: /api/followers
+        prefix: /qaservice
     route:
     - destination:
         host: qaservice
