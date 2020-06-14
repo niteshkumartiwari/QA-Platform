@@ -1,0 +1,9 @@
+kubectl get svc -n istio-system
+
+kubectl get pods -n istio-system
+
+//injection of istio, envoy proxy enabled
+kubectl label namespace default istio-injection=enabled
+
+You can verify that the label was successfully applied:
+kubectl get namespace -L istio-injection

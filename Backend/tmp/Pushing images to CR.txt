@@ -1,9 +1,9 @@
- docker build -t authservice . 
+docker build -t authservice . 
 
- gcloud auth configure-docker
+gcloud auth configure-docker
 
- gcr.io/stone-timing-278916/authservice
+gcr.io/stone-timing-278916/authservice
 
- docker tag qaservice gcr.io/stone-timing-278916/qaservice
+docker tag qaservice gcr.io/stone-timing-278916/qaservice
 
- docker push gcr.io/stone-timing-278916/qaservice
+docker push gcr.io/stone-timing-278916/authservice

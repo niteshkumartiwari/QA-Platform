@@ -26,6 +26,6 @@ kubectl describe pod auth
 
 kubectl create -f authDeploy.yaml
 
-kubectl expose deployment authservice --type "LoadBalancer" --port 80 --target-port 8080
+kubectl expose deployment qaservice --type "LoadBalancer" --port 80 --target-port 8080
 
-http://35.202.126.171:80/swagger-ui.html
+http://35.225.51.129:80/swagger-ui.html
