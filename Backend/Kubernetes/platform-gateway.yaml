@@ -1,0 +1,65 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: platform-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: platforminfo
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - platform-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /authenticate
+    - uri:
+        prefix: /hello
+    - uri:
+        prefix: /register
+    - uri:
+        prefix: /api/user
+    - uri:
+        prefix: /api/users
+    - uri:
+        prefix: register
+    - uri:
+        prefix: /api/interests
+    - uri:
+        prefix: /api/people
+    - uri:
+        prefix: /api/roles
+    route:
+    - destination:
+        host: authservice
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/answers
+    - uri:
+        prefix: /api/seen
+    - uri:
+        prefix: /api/kudos
+    - uri:
+        prefix: /api/questions
+    - uri:
+        prefix: /api/followers
+    route:
+    - destination:
+        host: qaservice
+        port:
+          number: 8080

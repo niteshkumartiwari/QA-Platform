@@ -49,4 +49,26 @@ spec:
         - name: my-secrets-volume
           secret:
             secretName: cloudsql-instance-credentials
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: authservice
+  namespace: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authservice
+  namespace: default
+  labels:
+    app: authservice
+spec:
+  selector:
+    app: authservice
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+  type: #SVC_TYPE#
 

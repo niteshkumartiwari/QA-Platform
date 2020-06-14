@@ -49,3 +49,28 @@ spec:
         - name: my-secrets-volume
           secret:
             secretName: cloudsql-instance-credentials
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: qaservice
+  namespace: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qaservice
+  namespace: default
+  labels:
+    app: qaservice
+spec:
+  selector:
+    app: qaservice
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+  type: #SVC_TYPE#
+
+
