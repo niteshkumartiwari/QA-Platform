@@ -42,7 +42,7 @@ public class HelloResource {
 		return "Hello World";
 	}
 	
-	@PostMapping("/authenticate")
+	@PostMapping("/login")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)throws Exception{
 		try {
 			theAuthenticationManager.authenticate(
