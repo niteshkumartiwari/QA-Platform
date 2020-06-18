@@ -7,7 +7,8 @@ import com.platform.springsecurityjwt.models.Interest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 @Service
 public class InterestServiceImpl implements InterestService{
@@ -22,6 +23,20 @@ public class InterestServiceImpl implements InterestService{
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
+    }
+
+    @Override
+    public Map<Long,Interest> findAllInterestsByIds(List<Long> interestIds) {
+        Map<Long,Interest> interests= new HashMap<>();
+
+        for(Long interestId: interestIds){
+            Optional result=theInterestDAO.findById(interestId);
+            if(result.isPresent()){
+                interests.put(interestId,(Interest) result.get());
+            }
+        }
+
+        return  interests;
     }
 
     @Override

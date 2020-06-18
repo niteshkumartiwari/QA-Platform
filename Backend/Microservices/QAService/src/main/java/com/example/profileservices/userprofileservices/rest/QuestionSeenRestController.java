@@ -1,5 +1,7 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedUserDateResponse;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.AnswerSeen;
 import com.example.profileservices.userprofileservices.models.QuestionSeen;
@@ -19,8 +21,11 @@ public class QuestionSeenRestController {
     @Autowired
     private QuestionSeenService theQuestionSeenService;
 
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/{id}")
-    private UserDateResponseWrapper findByQuestionId(@PathVariable Long id){
+    private List<UserConvertedUserDateResponse> findByQuestionId(@PathVariable Long id, @RequestHeader (name="Authorization") String jwt){
         List<UserDateResponse> result;
         try{
             result=theQuestionSeenService.findByQuestionId(id);
@@ -28,9 +33,8 @@ public class QuestionSeenRestController {
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        UserDateResponseWrapper userDateResponseWrapper = new UserDateResponseWrapper();
-        userDateResponseWrapper.setUserDateResponse(result);
-        return userDateResponseWrapper;
+
+        return theUserServiceCaller.addUserToUserDateResponse(result,jwt);
     }
 
     @GetMapping("/users/{id}")

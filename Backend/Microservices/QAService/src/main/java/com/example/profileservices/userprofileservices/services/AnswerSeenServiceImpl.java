@@ -35,6 +35,7 @@ public class AnswerSeenServiceImpl implements AnswerSeenService{
         List<UserDateResponse> userAns= new ArrayList<>();
         for(AnswerSeen val: result){
             UserDateResponse tempUserDateResponse = new UserDateResponse();
+            tempUserDateResponse.setUserId(val.getUser());
             tempUserDateResponse.setCreatedOn(val.getCreatedOn());
 
             userAns.add(tempUserDateResponse);

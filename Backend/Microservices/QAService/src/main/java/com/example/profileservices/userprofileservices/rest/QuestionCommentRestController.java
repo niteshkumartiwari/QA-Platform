@@ -1,5 +1,7 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedQuestionComment;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.QuestionComment;
 import com.example.profileservices.userprofileservices.services.QuestionCommentService;
@@ -17,10 +19,14 @@ public class QuestionCommentRestController {
     @Autowired
     private QuestionCommentService theQuestionCommentService;
 
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/{quesId}/comments")
-    private List<QuestionComment> findByQuestionId(@PathVariable Long quesId){
+    private List<UserConvertedQuestionComment> findByQuestionId(@PathVariable Long quesId,@RequestHeader (name="Authorization") String jwt){
         try{
-            return theQuestionCommentService.findByQuestionId(quesId);
+            List<QuestionComment> result= theQuestionCommentService.findByQuestionId(quesId);
+            return theUserServiceCaller.addUserToQuestionComment(result,jwt);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());

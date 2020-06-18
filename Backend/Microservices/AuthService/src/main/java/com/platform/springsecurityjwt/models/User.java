@@ -1,7 +1,5 @@
 package com.platform.springsecurityjwt.models;
 
-import java.sql.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 @Entity
 @Table(name="user",schema = "public" ,uniqueConstraints = {
@@ -61,7 +60,7 @@ public class User {
 	private Integer isBanned;
 	
 	@Column(name= "created_on")
-	private	Date createdOn;
+	private Date createdOn;
 	
 	@Column(name= "last_login")
 	private Date lastLogin;

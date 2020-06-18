@@ -1,5 +1,7 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedAnswers;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.Answer;
 import com.example.profileservices.userprofileservices.services.AnswerService;
@@ -17,10 +19,14 @@ public class AnswerRestController {
     @Autowired
     private AnswerService theAnswerService;
 
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/questions/{questionId}/answers")
-    private List<Answer> findByQuestionId(@PathVariable Long questionId){
+    private List<UserConvertedAnswers> findByQuestionId(@PathVariable Long questionId, @RequestHeader (name="Authorization") String jwt){
         try{
-            return theAnswerService.findByQuestionId(questionId);
+            List<Answer> theAnswers= theAnswerService.findByQuestionId(questionId);
+            return theUserServiceCaller.addUserToAnswer(theAnswers,jwt);
         }
         catch (Exception e){
             throw new ApiRequestException("Something Went Wrong!!");

@@ -1,5 +1,7 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedAnswerComment;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.exception.ApiResourceNotFound;
 import com.example.profileservices.userprofileservices.models.AnswerComment;
@@ -18,16 +20,21 @@ public class AnswerCommentRestController {
     @Autowired
     private AnswerCommentService theAnswerCommentService;
 
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/{ansId}/comments")
-    private List<AnswerComment> findByAnswerId(@PathVariable Long ansId){
+    private List<UserConvertedAnswerComment> findByAnswerId(@PathVariable Long ansId, @RequestHeader (name="Authorization") String jwt){
         try{
-            return theAnswerCommentService.findByAnswerId(ansId);
+            List<AnswerComment> result= theAnswerCommentService.findByAnswerId(ansId);
+            return theUserServiceCaller.addUserToAnswerComment(result,jwt);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
     }
 
+    //UserId -> User Object Not Needed since userId itself is with client
     @GetMapping("/comments/users/{userId}")
     private List<AnswerComment> findByRepliedBy(@PathVariable Long userId){
         try{

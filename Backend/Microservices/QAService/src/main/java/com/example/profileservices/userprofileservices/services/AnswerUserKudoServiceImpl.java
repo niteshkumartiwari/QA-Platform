@@ -29,6 +29,7 @@ public class AnswerUserKudoServiceImpl implements AnswerUserKudoService{
         List<UserDateResponse> userAns= new ArrayList<>();
         for(AnswerUserKudo val: result){
             UserDateResponse tempUserDateResponse = new UserDateResponse();
+            tempUserDateResponse.setUserId(val.getUser());
             tempUserDateResponse.setCreatedOn(val.getCreatedOn());
 
             userAns.add(tempUserDateResponse);

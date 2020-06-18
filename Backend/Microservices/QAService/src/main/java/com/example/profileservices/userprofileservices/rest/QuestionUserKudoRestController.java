@@ -1,5 +1,7 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedUserDateResponse;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.QuestionUserKudo;
 import com.example.profileservices.userprofileservices.services.QuestionUserKudoService;
@@ -18,12 +20,14 @@ public class QuestionUserKudoRestController {
     @Autowired
     private QuestionUserKudoService theQuestionUserKudoService;
 
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/{id}")
-    private UserDateResponseWrapper findByQuestionId(@PathVariable Long id){
+    private List<UserConvertedUserDateResponse> findByQuestionId(@PathVariable Long id, @RequestHeader (name="Authorization") String jwt){
         List<UserDateResponse> result=theQuestionUserKudoService.findByQuestionId(id);
-        UserDateResponseWrapper userDateResponseWrapper = new UserDateResponseWrapper();
-        userDateResponseWrapper.setUserDateResponse(result);
-        return userDateResponseWrapper;
+
+        return theUserServiceCaller.addUserToUserDateResponse(result,jwt);
     }
 
     @GetMapping("/users/{id}")
