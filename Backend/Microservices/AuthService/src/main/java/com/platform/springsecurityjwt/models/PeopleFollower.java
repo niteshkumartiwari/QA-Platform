@@ -1,6 +1,7 @@
 package com.platform.springsecurityjwt.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.platform.springsecurityjwt.models.id.PeopleFollowerId;
 
 import javax.persistence.*;

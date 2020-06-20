@@ -7,6 +7,7 @@ import com.platform.springsecurityjwt.util.response.RoleResponse;
 import com.platform.springsecurityjwt.util.response.UserResponse;
 import com.platform.springsecurityjwt.util.response.UserResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,21 +31,14 @@ public class UserRoleRestController {
         }
     }
 
-    @GetMapping("/{roleId}/users")
-    private UserResponseWrapper findByRoleId(@PathVariable Long roleId){
-        List<UserResponse> userResponses;
-
+    @GetMapping("/{roleId}/users/{currentPage}/{noOfElemPerPage}")
+    private Page<UserRole> findByRoleId(@PathVariable Long roleId, @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            userResponses= theUserRoleService.findByRoleId(roleId);
+            return theUserRoleService.findByRoleId(roleId,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        UserResponseWrapper userResponseWrapper= new UserResponseWrapper();
-        userResponseWrapper.setUserResponses(userResponses);
-
-        return userResponseWrapper;
     }
 
     @PostMapping("/users")

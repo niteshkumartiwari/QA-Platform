@@ -7,6 +7,9 @@ import com.platform.springsecurityjwt.models.PeopleFollower;
 import com.platform.springsecurityjwt.models.id.PeopleFollowerId;
 import com.platform.springsecurityjwt.util.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,43 +27,29 @@ public class PeopleFollowerServiceImpl implements PeopleFollowerService{
     }
 
     @Override
-    public List<UserResponse> findByFollowerId(Long followerId) {
-        List<PeopleFollower> result;
+    public Page<PeopleFollower> findByFollowerId(Long followerId,int currentPage,int noOfElementsPerPage) {
+        Page<PeopleFollower> result;
         try{
-            result= thePeopleFollowerDAO.findByFollowerId(followerId);
+            result= thePeopleFollowerDAO.findByFollowerId(followerId, (Pageable) PageRequest.of(currentPage,noOfElementsPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException("Invalid followerId");
         }
-        List<UserResponse> userResponses=new ArrayList<>();
-        for(PeopleFollower peopleFollower: result){
-            UserResponse userResponse= new UserResponse();
-            userResponse.setUserId(peopleFollower.getFollowee().getId());
 
-            userResponses.add(userResponse);
-        }
-
-        return userResponses;
+        return result;
     }
 
     @Override
-    public List<UserResponse> findByFolloweeId(Long followeeId) {
-        List<PeopleFollower> result;
+    public Page<PeopleFollower> findByFolloweeId(Long followeeId, int currentPage, int noOfElementsPerPage) {
+        Page<PeopleFollower> result;
         try{
-            result= thePeopleFollowerDAO.findByFolloweeId(followeeId);
+            result= thePeopleFollowerDAO.findByFolloweeId(followeeId,(Pageable) PageRequest.of(currentPage,noOfElementsPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException("Invalid followeeId");
         }
-        List<UserResponse> userResponses=new ArrayList<>();
-        for(PeopleFollower peopleFollower: result){
-            UserResponse userResponse= new UserResponse();
-            userResponse.setUserId(peopleFollower.getFollower().getId());
 
-            userResponses.add(userResponse);
-        }
-
-        return userResponses;
+        return result;
     }
 
     @Override

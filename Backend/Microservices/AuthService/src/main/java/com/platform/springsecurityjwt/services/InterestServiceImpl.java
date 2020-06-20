@@ -5,6 +5,9 @@ import com.platform.springsecurityjwt.dao.InterestDAO;
 import com.platform.springsecurityjwt.exception.ApiRequestException;
 import com.platform.springsecurityjwt.models.Interest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -23,6 +26,11 @@ public class InterestServiceImpl implements InterestService{
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
+    }
+
+    @Override
+    public Page<Interest> findAllInterestsByPages(int currentPage, int numberOfElementsPerPage, String sortParam) {
+        return theInterestDAO.findAll(PageRequest.of(currentPage,numberOfElementsPerPage, Sort.by(sortParam)));
     }
 
     @Override

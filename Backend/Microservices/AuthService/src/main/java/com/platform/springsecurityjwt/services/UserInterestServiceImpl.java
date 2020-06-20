@@ -8,6 +8,9 @@ import com.platform.springsecurityjwt.models.id.UserInterestId;
 import com.platform.springsecurityjwt.util.response.InterestReputationResponse;
 import com.platform.springsecurityjwt.util.response.UserReputationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,47 +30,23 @@ public class UserInterestServiceImpl implements UserInterestService{
     }
 
     @Override
-    public List<InterestReputationResponse> findByUserId(Long userId) {
-        List<UserInterest> userInterests;
-
+    public Page<UserInterest> findByUserId(Long userId, int currentPage, int noOfElemPerPage) {
         try{
-            userInterests=theUserInterestDAO.findByUserId(userId);
+            return theUserInterestDAO.findByUserId(userId, (Pageable) PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<InterestReputationResponse> interestReputationResponses= new ArrayList<>();
-        for(UserInterest userInterest: userInterests){
-            InterestReputationResponse tmpInterestReputationResponse= new InterestReputationResponse();
-            tmpInterestReputationResponse.setInterestId(userInterest.getInterest().getId());
-            tmpInterestReputationResponse.setReputation(userInterest.getReputation());
-
-            interestReputationResponses.add(tmpInterestReputationResponse);
-        }
-
-        return interestReputationResponses;
     }
 
     @Override
-    public List<UserReputationResponse> findByInterestId(Long interestId) {
-        List<UserInterest> userInterests;
-
+    public Page<UserInterest> findByInterestId(Long interestId, int currentPage, int noOfElemPerPage) {
         try{
-            userInterests=theUserInterestDAO.findByInterestId(interestId);
+            return theUserInterestDAO.findByInterestId(interestId,(Pageable) PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<UserReputationResponse> userReputationResponses= new ArrayList<>();
-        for(UserInterest userInterest: userInterests){
-            UserReputationResponse tmpUserReputationResponse= new UserReputationResponse();
-            tmpUserReputationResponse.setUserId(userInterest.getUser().getId());
-            tmpUserReputationResponse.setReputation(userInterest.getReputation());
-
-            userReputationResponses.add(tmpUserReputationResponse);
-        }
-
-        return userReputationResponses;
     }
 
     @Override
