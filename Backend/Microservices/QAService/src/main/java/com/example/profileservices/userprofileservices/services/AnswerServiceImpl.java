@@ -5,6 +5,9 @@ import com.example.profileservices.userprofileservices.dao.QuestionDAO;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +24,14 @@ public class AnswerServiceImpl implements AnswerService{
     }
 
     @Override
-    public List<Answer> findByQuestionId(Long questionId) {
-        return theAnswerDAO.findByQuestionId(questionId);
+    public Page<Answer> findByQuestionId(Long questionId,int currentPage, int noOfElemPerPage) {
+        return theAnswerDAO.findByQuestionId(questionId, PageRequest.of(currentPage,noOfElemPerPage,
+                Sort.by(Sort.Direction.DESC,"upKudo")));
     }
 
     @Override
-    public List<Answer> findByUserId(Long userId) {
-        return theAnswerDAO.findByAnsweredBy(userId);
+    public Page<Answer> findByUserId(Long userId,int currentPage, int noOfElemPerPage) {
+        return theAnswerDAO.findByAnsweredBy(userId,PageRequest.of(currentPage,noOfElemPerPage,Sort.by(Sort.Direction.DESC,"upKudo")));
     }
 
     @Override

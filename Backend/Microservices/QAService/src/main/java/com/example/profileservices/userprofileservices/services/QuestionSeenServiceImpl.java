@@ -8,6 +8,10 @@ import com.example.profileservices.userprofileservices.models.QuestionSeen;
 import com.example.profileservices.userprofileservices.util.response.QuestionDateResponse;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,45 +29,25 @@ public class QuestionSeenServiceImpl implements QuestionSeenService {
     }
 
     @Override
-    public List<UserDateResponse> findByQuestionId(Long questionId) {
-        List<QuestionSeen> result;
+    public Page<QuestionSeen> findByQuestionId(Long questionId, int currentPage, int noOfElemPerPage) {
         try{
-            result = theQuestionSeenDAO.findByQuestionId(questionId);
+            return theQuestionSeenDAO.findByQuestionId(questionId, PageRequest.of(currentPage,noOfElemPerPage
+                    , Sort.by(Sort.Direction.DESC,"createdOn")));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<UserDateResponse> userAns= new ArrayList<>();
-        for(QuestionSeen val: result){
-            UserDateResponse tempUserDateResponse = new UserDateResponse();
-            tempUserDateResponse.setUserId(val.getUser());
-            tempUserDateResponse.setCreatedOn(val.getCreatedOn());
-
-            userAns.add(tempUserDateResponse);
-        }
-
-        return userAns;
     }
 
     @Override
-    public List<QuestionDateResponse> findByUserId(Long userId) {
-        List<QuestionSeen> result;
+    public Page<QuestionSeen> findByUserId(Long userId, int currentPage, int noOfElemPerPage) {
         try{
-            result= theQuestionSeenDAO.findByUser(userId);
+            return theQuestionSeenDAO.findByUser(userId,PageRequest.of(currentPage,noOfElemPerPage,
+                    Sort.by(Sort.Direction.DESC,"createdOn")));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<QuestionDateResponse> question= new ArrayList<>();
-        for(QuestionSeen questionSeen: result){
-            QuestionDateResponse tempAnswerDateResponse =new QuestionDateResponse();
-            tempAnswerDateResponse.setQuestionId(questionSeen.getQuestion().getId());
-            tempAnswerDateResponse.setCreatedOn(questionSeen.getCreatedOn());
-
-            question.add(tempAnswerDateResponse);
-        }
-
-        return question;
     }
 
     @Override

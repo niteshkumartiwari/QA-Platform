@@ -69,15 +69,13 @@ public class QuestionComment implements Serializable {
     }
 
     public Long getQuesId() {
+        if(question!=null)
+            quesId=question.getId();
         return quesId;
     }
 
     public void setQuesId(Long quesId) {
         this.quesId = quesId;
-    }
-
-    public Question getQuestion() {
-        return question;
     }
 
     public void setQuestion(Question question) {

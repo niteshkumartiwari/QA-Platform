@@ -7,11 +7,13 @@ import com.example.profileservices.userprofileservices.models.Question;
 import com.example.profileservices.userprofileservices.models.QuestionInterest;
 import com.example.profileservices.userprofileservices.services.QuestionInterestService;
 import com.example.profileservices.userprofileservices.services.QuestionService;
+import com.example.profileservices.userprofileservices.util.decorater.QuestionDecorator;
 import com.example.profileservices.userprofileservices.util.mapper.Interest;
 import com.example.profileservices.userprofileservices.util.response.InterestResponse;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponse;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,24 +45,37 @@ public class QuestionInterestRestController {
         }
     }
 
-    @GetMapping("/{interestId}/questions")
-    private List<UserConvertedQuestion> findByInterestId(@PathVariable Long interestId, @RequestHeader (name="Authorization") String jwt)throws Exception{
-        List<QuestionResponse> questionResponses;
+    @GetMapping("/{interestId}/questions/{currentPage}/{noOfElemPerPage}")
+    private QuestionDecorator findByInterestId(@PathVariable Long interestId, @RequestHeader (name="Authorization") String jwt,
+                                                         @PathVariable int currentPage, @PathVariable int noOfElemPerPage)throws Exception{
+        Page<QuestionInterest> result;
 
         try{
-            questionResponses= theQuestionInterestService.findByInterestId(interestId);
+            result= theQuestionInterestService.findByInterestId(interestId,currentPage,noOfElemPerPage);
+
+            List<Question> questionList = new ArrayList<>();
+            for(QuestionInterest questionInterest: result){
+                Question question=theQuestionService.findById(questionInterest.getQuesId());
+                questionList.add(question);
+            }
+
+            List<UserConvertedQuestion> finalAns= theUserServiceCaller.addUserToQuestion(questionList,jwt);
+
+            QuestionDecorator decorator= QuestionDecorator.builder()
+                    .theUserConvertedQuestions(finalAns)
+                    .totalPages(result.getTotalPages())
+                    .totalElements(result.getTotalElements())
+                    .sort(result.getSort())
+                    .size(result.getSize())
+                    .pageable(result.getPageable())
+                    .number(result.getNumber())
+                    .build();
+
+            return decorator;
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        List<Question> questionList = new ArrayList<>();
-        for(QuestionResponse questionResponse: questionResponses){
-            Question question=theQuestionService.findById(questionResponse.getQuestionId());
-            questionList.add(question);
-        }
-
-        return theUserServiceCaller.addUserToQuestion(questionList,jwt);
     }
 
     @PostMapping("/questions")

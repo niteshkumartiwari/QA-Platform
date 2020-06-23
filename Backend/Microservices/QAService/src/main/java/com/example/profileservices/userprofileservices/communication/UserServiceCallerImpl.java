@@ -25,8 +25,9 @@ public class UserServiceCallerImpl implements UserServiceCaller{
     @Override
     public List<UserConvertedAnswerComment> addUserToAnswerComment(List<AnswerComment> list,String jwt) {
         String userIds="";
-        for(AnswerComment theAnswerComment: list){
-            userIds+=theAnswerComment.getRepliedBy().toString();
+        for(int i=0;i<list.size();i++){
+            userIds+=list.get(i).getRepliedBy().toString();
+            if(i!= list.size()-1) userIds+=",";
         }
 
         List<User> usersList= theUserService.getUsersList(userIds,jwt);

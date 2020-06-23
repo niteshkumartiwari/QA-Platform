@@ -62,6 +62,8 @@ public class QuestionUserKudo implements Serializable {
     }
 
     public Long getQuesId() {
+        if(question!=null)
+            quesId=question.getId();
         return quesId;
     }
 
@@ -71,10 +73,6 @@ public class QuestionUserKudo implements Serializable {
 
     public Date getCreatedOn() {
         return createdOn;
-    }
-
-    public Question getQuestion() {
-        return question;
     }
 
     public void setCreatedOn(Date createdOn) {

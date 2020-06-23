@@ -6,6 +6,9 @@ import java.util.Optional;
 import com.example.profileservices.userprofileservices.exception.ApiResourceNotFound;
 import com.example.profileservices.userprofileservices.models.Question;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.profileservices.userprofileservices.dao.QuestionDAO;
@@ -30,8 +33,8 @@ public class QuestionServiceImpl implements QuestionService{
 	}
 
 	@Override
-	public List<Question> findAll() {
-		return questionDAO.findAll();
+	public Page<Question> findAll(int currentPage, int noOfElemPerPage) {
+		return questionDAO.findAll(PageRequest.of(currentPage,noOfElemPerPage, Sort.by(Sort.Direction.DESC,"createdOn")));
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class QuestionServiceImpl implements QuestionService{
 	}
 
 	@Override
-	public List<Question> findByUserId(Long userId) {
-		return questionDAO.findByAskedBy(userId);
+	public Page<Question> findByUserId(Long userId,int currentPage,int noOfElemPerPage) {
+		return questionDAO.findByAskedBy(userId,PageRequest.of(currentPage,noOfElemPerPage, Sort.by(Sort.Direction.DESC,"createdOn")));
 	}
 }

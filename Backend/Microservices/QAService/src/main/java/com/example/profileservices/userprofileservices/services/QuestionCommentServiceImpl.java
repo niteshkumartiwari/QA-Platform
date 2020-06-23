@@ -4,6 +4,9 @@ import com.example.profileservices.userprofileservices.dao.QuestionCommentDAO;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.QuestionComment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +23,10 @@ public class QuestionCommentServiceImpl implements QuestionCommentService{
     }
 
     @Override
-    public List<QuestionComment> findByQuestionId(Long questionId) {
+    public Page<QuestionComment> findByQuestionId(Long questionId, int currentPage, int noOfElemPerPage) {
         try{
-            return theQuestionCommentDAO.findByQuestionId(questionId);
+            return theQuestionCommentDAO.findByQuestionId(questionId, PageRequest.of(currentPage,noOfElemPerPage,
+                     Sort.by(Sort.Direction.DESC,"createdOn")));
         }
         catch (Exception e){
             throw new ApiRequestException("Something went Wrong.");
@@ -30,9 +34,10 @@ public class QuestionCommentServiceImpl implements QuestionCommentService{
     }
 
     @Override
-    public List<QuestionComment> findByRepliedById(Long userId) {
+    public Page<QuestionComment> findByRepliedById(Long userId, int currentPage, int noOfElemPerPage) {
         try{
-            return theQuestionCommentDAO.findByRepliedBy(userId);
+            return theQuestionCommentDAO.findByRepliedBy(userId,PageRequest.of(currentPage,noOfElemPerPage,
+                    Sort.by(Sort.Direction.DESC,"createdOn")));
         }
         catch (Exception e){
             throw new ApiRequestException("Something went Wrong.");
