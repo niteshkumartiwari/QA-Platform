@@ -2,9 +2,14 @@ package com.example.profileservices.userprofileservices.rest;
 
 import java.util.List;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedQuestion;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.Question;
+import com.example.profileservices.userprofileservices.util.decorater.QuestionDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +23,32 @@ public class QuestionRestController {
 	@Autowired
 	private QuestionService theQuestionService;
 
+	@Autowired
+	private UserServiceCaller theUserServiceCaller;
+
 	//expose "/questions" and return list of questions
-	@GetMapping("/questions")
-	public List<Question> findAll(){
-		return theQuestionService.findAll();
+	@GetMapping("/questions/{currentPage}/{noOfElemPerPage}")
+	public QuestionDecorator findAll(@RequestHeader (name="Authorization") String jwt,
+											   @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
+		Page<Question> result= theQuestionService.findAll(currentPage,noOfElemPerPage);
+		List<UserConvertedQuestion> finalAns= theUserServiceCaller.addUserToQuestion(result.getContent(),jwt);
+
+		QuestionDecorator decorator= QuestionDecorator.builder()
+				.theUserConvertedQuestions(finalAns)
+				.totalPages(result.getTotalPages())
+				.totalElements(result.getTotalElements())
+				.sort(result.getSort())
+				.size(result.getSize())
+				.pageable(result.getPageable())
+				.number(result.getNumber())
+				.build();
+
+		return decorator;
 	}
 
 	//expose "/questions/{questionId}" to get single question
 	@GetMapping("/questions/{questionId}")
-	public Question findById(@PathVariable Long questionId){
+	public UserConvertedQuestion findById(@PathVariable Long questionId, @RequestHeader (name="Authorization") String jwt){
 		Question theQuestion=null;
 		try{
 			theQuestion= theQuestionService.findById(questionId);
@@ -35,14 +57,28 @@ public class QuestionRestController {
 			throw new ApiRequestException("Id Not Found");
 		}
 
-		return theQuestion;
+		return theUserServiceCaller.addUserToSingleQuestion(theQuestion,jwt);
 	}
 
 	//expose "/user/{userId}/questions" and return list of questions asked by userId
-	@GetMapping("/users/{userId}/questions")
-	public List<Question> findByUserId(@PathVariable Long userId){
+	@GetMapping("/users/{userId}/questions/{currentPage}/{noOfElemPerPage}")
+	public QuestionDecorator findByUserId(@PathVariable Long userId,@RequestHeader (name="Authorization") String jwt,
+													@PathVariable int currentPage, @PathVariable int noOfElemPerPage){
 		try{
-			return theQuestionService.findByUserId(userId);
+			Page<Question> result= theQuestionService.findByUserId(userId,currentPage,noOfElemPerPage);
+			List<UserConvertedQuestion> finalAns= theUserServiceCaller.addUserToQuestion(result.getContent(),jwt);
+
+			QuestionDecorator decorator= QuestionDecorator.builder()
+					.theUserConvertedQuestions(finalAns)
+					.totalPages(result.getTotalPages())
+					.totalElements(result.getTotalElements())
+					.sort(result.getSort())
+					.size(result.getSize())
+					.pageable(result.getPageable())
+					.number(result.getNumber())
+					.build();
+
+			return decorator;
 		}
 		catch (Exception e){
 			throw new ApiRequestException("Sorry, Some Error Happened");

@@ -9,6 +9,7 @@ import com.platform.springsecurityjwt.util.response.InterestReputationResponseWr
 import com.platform.springsecurityjwt.util.response.UserReputationResponse;
 import com.platform.springsecurityjwt.util.response.UserReputationResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,36 +23,24 @@ public class UserInterestRestController {
     @Autowired
     private UserInterestService theUserInterestService;
 
-    @GetMapping("/{userId}/interests")
-    private InterestReputationResponseWrapper findByUserId(@PathVariable Long userId){
-        List<InterestReputationResponse> interestReputationResponses;
+    @GetMapping("/{userId}/interests/{currentPage}/{noOfElemPerPage}")
+    private Page<UserInterest> findByUserId(@PathVariable Long userId, @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            interestReputationResponses= theUserInterestService.findByUserId(userId);
+            return theUserInterestService.findByUserId(userId,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        InterestReputationResponseWrapper interestReputationResponseWrapper= new InterestReputationResponseWrapper();
-        interestReputationResponseWrapper.setInterestReputationResponseList(interestReputationResponses);
-
-        return  interestReputationResponseWrapper;
     }
 
-    @GetMapping("/interests/{interestId}")
-    private UserReputationResponseWrapper findByInterestId(@PathVariable Long interestId){
-        List<UserReputationResponse> userReputationResponses;
+    @GetMapping("/interests/{interestId}/{currentPage}/{noOfElemPerPage}")
+    private Page<UserInterest> findByInterestId(@PathVariable Long interestId, @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            userReputationResponses= theUserInterestService.findByInterestId(interestId);
+            return theUserInterestService.findByInterestId(interestId,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        UserReputationResponseWrapper userReputationResponseWrapper= new UserReputationResponseWrapper();
-        userReputationResponseWrapper.setUserReputationResponses(userReputationResponses);
-
-        return userReputationResponseWrapper;
     }
 
     @PostMapping("/interests")

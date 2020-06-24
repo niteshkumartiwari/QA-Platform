@@ -6,6 +6,7 @@ import com.platform.springsecurityjwt.services.PeopleFollowerService;
 import com.platform.springsecurityjwt.util.response.UserResponse;
 import com.platform.springsecurityjwt.util.response.UserResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,36 +20,24 @@ public class PeopleFollowerRestController {
     @Autowired
     private PeopleFollowerService thePeopleFollowerService;
 
-    @GetMapping("/followees/{followerid}")
-    private UserResponseWrapper findByFollowerId(@PathVariable Long followerid){
-        List<UserResponse> result;
+    @GetMapping("/followees/{followerid}/{currentPage}/{noOfElementsPerPage}")
+    private Page<PeopleFollower> findByFollowerId(@PathVariable Long followerid, @PathVariable int currentPage, @PathVariable int noOfElementsPerPage){
         try{
-            result=thePeopleFollowerService.findByFollowerId(followerid);
+            return thePeopleFollowerService.findByFollowerId(followerid,currentPage,noOfElementsPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        UserResponseWrapper userResponseWrapper= new UserResponseWrapper();
-        userResponseWrapper.setUserResponses(result);
-
-        return userResponseWrapper;
     }
 
-    @GetMapping("/followers/{followeeId}")
-    private UserResponseWrapper findByFolloweeId(@PathVariable Long followeeId){
-        List<UserResponse> result;
+    @GetMapping("/followers/{followeeId}/{currentPage}/{noOfElementsPerPage}")
+    private Page<PeopleFollower> findByFolloweeId(@PathVariable Long followeeId, @PathVariable int currentPage, @PathVariable int noOfElementsPerPage){
         try{
-            result=thePeopleFollowerService.findByFolloweeId(followeeId);
+            return thePeopleFollowerService.findByFolloweeId(followeeId,currentPage,noOfElementsPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        UserResponseWrapper userResponseWrapper= new UserResponseWrapper();
-        userResponseWrapper.setUserResponses(result);
-
-        return userResponseWrapper;
     }
 
     @PostMapping()

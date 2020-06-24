@@ -1,9 +1,13 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedQuestionComment;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.QuestionComment;
 import com.example.profileservices.userprofileservices.services.QuestionCommentService;
+import com.example.profileservices.userprofileservices.util.decorater.QuestionCommentDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +21,37 @@ public class QuestionCommentRestController {
     @Autowired
     private QuestionCommentService theQuestionCommentService;
 
-    @GetMapping("/{quesId}/comments")
-    private List<QuestionComment> findByQuestionId(@PathVariable Long quesId){
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
+    @GetMapping("/{quesId}/comments/{currentPage}/{noOfElemPerPage}")
+    private QuestionCommentDecorator findByQuestionId(@PathVariable Long quesId,@RequestHeader (name="Authorization") String jwt,
+                                                                @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            return theQuestionCommentService.findByQuestionId(quesId);
+            Page<QuestionComment> result= theQuestionCommentService.findByQuestionId(quesId, currentPage,noOfElemPerPage);
+            List<UserConvertedQuestionComment> tmpAns= theUserServiceCaller.addUserToQuestionComment(result.getContent(),jwt);
+
+            QuestionCommentDecorator decorator= QuestionCommentDecorator.builder()
+                    .theUserConvertedQuestionComments(tmpAns)
+                    .totalPages(result.getTotalPages())
+                    .totalElements(result.getTotalElements())
+                    .sort(result.getSort())
+                    .size(result.getSize())
+                    .pageable(result.getPageable())
+                    .number(result.getNumber())
+                    .build();
+
+            return decorator;
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
     }
 
-    @GetMapping("/comments/users/{userId}")
-    private List<QuestionComment> findByRepliedBy(@PathVariable Long userId){
+    @GetMapping("/comments/users/{userId}/{currentPage}/{noOfElemPerPage}")
+    private Page<QuestionComment> findByRepliedBy(@PathVariable Long userId,@PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            return theQuestionCommentService.findByRepliedById(userId);
+            return theQuestionCommentService.findByRepliedById(userId,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());

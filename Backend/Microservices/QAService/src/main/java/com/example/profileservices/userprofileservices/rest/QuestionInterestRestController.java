@@ -1,17 +1,25 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedQuestion;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
+import com.example.profileservices.userprofileservices.models.Question;
 import com.example.profileservices.userprofileservices.models.QuestionInterest;
 import com.example.profileservices.userprofileservices.services.QuestionInterestService;
+import com.example.profileservices.userprofileservices.services.QuestionService;
+import com.example.profileservices.userprofileservices.util.decorater.QuestionDecorator;
+import com.example.profileservices.userprofileservices.util.mapper.Interest;
 import com.example.profileservices.userprofileservices.util.response.InterestResponse;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponse;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,31 +28,54 @@ public class QuestionInterestRestController {
     @Autowired
     private QuestionInterestService theQuestionInterestService;
 
+    @Autowired
+    private QuestionService theQuestionService;
+
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
     @GetMapping("/questions/{questionId}")
-    private List<InterestResponse> findByQuestionId(@PathVariable Long questionId){
+    private List<Interest> findByQuestionId(@PathVariable Long questionId, @RequestHeader (name="Authorization") String jwt){
         try{
-            return theQuestionInterestService.findByQuestionId(questionId);
+            List<InterestResponse> result= theQuestionInterestService.findByQuestionId(questionId);
+            return  theUserServiceCaller.addInterestToInterestResponse(result,jwt);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
     }
 
-    @GetMapping("/{interestId}/questions")
-    private QuestionResponseWrapper findByInterestId(@PathVariable Long interestId){
-        List<QuestionResponse> questionResponses;
+    @GetMapping("/{interestId}/questions/{currentPage}/{noOfElemPerPage}")
+    private QuestionDecorator findByInterestId(@PathVariable Long interestId, @RequestHeader (name="Authorization") String jwt,
+                                                         @PathVariable int currentPage, @PathVariable int noOfElemPerPage)throws Exception{
+        Page<QuestionInterest> result;
 
         try{
-            questionResponses= theQuestionInterestService.findByInterestId(interestId);
+            result= theQuestionInterestService.findByInterestId(interestId,currentPage,noOfElemPerPage);
+
+            List<Question> questionList = new ArrayList<>();
+            for(QuestionInterest questionInterest: result){
+                Question question=theQuestionService.findById(questionInterest.getQuesId());
+                questionList.add(question);
+            }
+
+            List<UserConvertedQuestion> finalAns= theUserServiceCaller.addUserToQuestion(questionList,jwt);
+
+            QuestionDecorator decorator= QuestionDecorator.builder()
+                    .theUserConvertedQuestions(finalAns)
+                    .totalPages(result.getTotalPages())
+                    .totalElements(result.getTotalElements())
+                    .sort(result.getSort())
+                    .size(result.getSize())
+                    .pageable(result.getPageable())
+                    .number(result.getNumber())
+                    .build();
+
+            return decorator;
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-
-        QuestionResponseWrapper questionResponseWrapper= new QuestionResponseWrapper();
-        questionResponseWrapper.setQuestionResponses(questionResponses);
-
-        return questionResponseWrapper;
     }
 
     @PostMapping("/questions")

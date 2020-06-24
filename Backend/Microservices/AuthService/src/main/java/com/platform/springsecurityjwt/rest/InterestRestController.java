@@ -3,15 +3,18 @@ package com.platform.springsecurityjwt.rest;
 
 import com.platform.springsecurityjwt.exception.ApiRequestException;
 import com.platform.springsecurityjwt.models.Interest;
+import com.platform.springsecurityjwt.models.User;
 import com.platform.springsecurityjwt.services.InterestService;
 import com.platform.springsecurityjwt.util.response.InterestResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/interests")
@@ -33,12 +36,27 @@ public class InterestRestController {
         return interestResponseWrapper;
     }
 
+    @GetMapping("/{currentPage}/{numberOfElementsPerPage}/{sortParam}")
+    private Page<Interest> findAllInterestByPage(@PathVariable int currentPage,@PathVariable int numberOfElementsPerPage,@PathVariable String sortParam){
+        return theInterestService.findAllInterestsByPages(currentPage,numberOfElementsPerPage,sortParam);
+    }
+
     @GetMapping("/{interestId}")
     private Interest findByInterestId(@PathVariable Long interestId){
         try{
             return theInterestService.findById(interestId);
         }
         catch (Exception e){
+            throw new ApiRequestException(e.getMessage());
+        }
+    }
+
+    @GetMapping("list/{interestIds}")
+    public Map<Long,Interest> findAllInterestsByIds(@PathVariable List<Long> interestIds){
+        try{
+            return theInterestService.findAllInterestsByIds(interestIds);
+        }
+        catch(Exception e) {
             throw new ApiRequestException(e.getMessage());
         }
     }

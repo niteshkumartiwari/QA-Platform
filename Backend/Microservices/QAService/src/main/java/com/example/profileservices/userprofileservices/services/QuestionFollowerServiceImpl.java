@@ -7,6 +7,9 @@ import com.example.profileservices.userprofileservices.models.QuestionFollower;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponse;
 import com.example.profileservices.userprofileservices.util.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,41 +27,23 @@ public class QuestionFollowerServiceImpl implements QuestionFollowerService{
     }
 
     @Override
-    public List<UserResponse> findByQuestionId(Long questionId) {
-        List<QuestionFollower> result;
+    public Page<QuestionFollower> findByQuestionId(Long questionId, int currentPage, int noOfElemPerPage) {
         try{
-            result = theQuestionFollowerDAO.findByQuestionId(questionId);
+            return theQuestionFollowerDAO.findByQuestionId(questionId, (Pageable) PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<UserResponse> userAns= new ArrayList<>();
-        for(QuestionFollower val: result){
-            UserResponse tempUserDateResponse = new UserResponse();
-            tempUserDateResponse.setUserId(val.getUser());
-            userAns.add(tempUserDateResponse);
-        }
-
-        return userAns;
     }
 
     @Override
-    public List<QuestionResponse> findByUserId(Long userId) {
-        List<QuestionFollower> result;
+    public Page<QuestionFollower> findByUserId(Long userId, int currentPage, int noOfElemPerPage) {
         try{
-            result= theQuestionFollowerDAO.findByUser(userId);
+            return theQuestionFollowerDAO.findByUser(userId, (Pageable) PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<QuestionResponse> question= new ArrayList<>();
-        for(QuestionFollower questionSeen: result){
-            QuestionResponse tempAnswerDateResponse =new QuestionResponse();
-            tempAnswerDateResponse.setQuestionId(questionSeen.getQuestion().getId());
-            question.add(tempAnswerDateResponse);
-        }
-
-        return question;
     }
 
     @Override

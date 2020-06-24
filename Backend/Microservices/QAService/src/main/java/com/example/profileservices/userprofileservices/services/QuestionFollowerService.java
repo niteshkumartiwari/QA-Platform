@@ -5,12 +5,13 @@ import com.example.profileservices.userprofileservices.util.response.QuestionDat
 import com.example.profileservices.userprofileservices.util.response.QuestionResponse;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
 import com.example.profileservices.userprofileservices.util.response.UserResponse;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface QuestionFollowerService {
-    List<UserResponse> findByQuestionId(Long questionId);
-    List<QuestionResponse> findByUserId(Long userId);
+    Page<QuestionFollower> findByQuestionId(Long questionId, int currentPage, int noOfElemPerPage);
+    Page<QuestionFollower>  findByUserId(Long userId, int currentPage, int noOfElemPerPage);
     void addFollower(QuestionFollower theQuestionFollower);
     void deleteFollower(Long questionId,Long userId);
 }

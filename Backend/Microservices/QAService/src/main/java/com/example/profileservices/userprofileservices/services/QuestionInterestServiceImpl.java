@@ -7,6 +7,9 @@ import com.example.profileservices.userprofileservices.models.QuestionInterest;
 import com.example.profileservices.userprofileservices.util.response.InterestResponse;
 import com.example.profileservices.userprofileservices.util.response.QuestionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,23 +47,13 @@ public class QuestionInterestServiceImpl implements QuestionInterestService{
     }
 
     @Override
-    public List<QuestionResponse> findByInterestId(Long interestId) {
-        List<QuestionInterest> questionInterests;
+    public Page<QuestionInterest> findByInterestId(Long interestId, int currentPage, int noOfElemPerPage) {
         try {
-            questionInterests = theQuestionInterestDAO.findByQuestionId(interestId);
+            return theQuestionInterestDAO.findByInterest(interestId, PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<QuestionResponse> questionResponses= new ArrayList<>();
-        for(QuestionInterest questionInterest: questionInterests){
-            QuestionResponse tmpQuestionResponse= new QuestionResponse();
-            tmpQuestionResponse.setQuestionId(questionInterest.getQuestion().getId());
-
-            questionResponses.add(tmpQuestionResponse);
-        }
-
-        return questionResponses;
     }
 
     @Override

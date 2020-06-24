@@ -7,6 +7,9 @@ import com.example.profileservices.userprofileservices.models.QuestionUserKudo;
 import com.example.profileservices.userprofileservices.util.response.QuestionDateResponse;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,33 +27,15 @@ public class QuestionUserKudoServiceImpl implements QuestionUserKudoService{
     }
 
     @Override
-    public List<UserDateResponse> findByQuestionId(Long questionId) {
-        List<QuestionUserKudo> result= theQuestionUserKudoDAO.findByQuestionId(questionId);
-        List<UserDateResponse> userQues= new ArrayList<>();
-
-        for(QuestionUserKudo theQuestionUserKudo: result){
-            UserDateResponse tempUserDateResponse = new UserDateResponse();
-            tempUserDateResponse.setUserId(theQuestionUserKudo.getUser());
-            tempUserDateResponse.setCreatedOn(theQuestionUserKudo.getCreatedOn());
-
-            userQues.add(tempUserDateResponse);
-        }
-        return userQues;
+    public Page<QuestionUserKudo> findByQuestionId(Long questionId, int currentPage, int noOfElemPerPage) {
+        return theQuestionUserKudoDAO.findByQuestionId(questionId, PageRequest.of(currentPage,noOfElemPerPage,
+                Sort.by(Sort.Direction.DESC,"createdOn")));
     }
 
     @Override
-    public List<QuestionDateResponse> findByUserId(Long userId) {
-        List<QuestionUserKudo> result= theQuestionUserKudoDAO.findByUser(userId);
-        List<QuestionDateResponse> question= new ArrayList<>();
-        for(QuestionUserKudo answerUserKudo: result){
-            QuestionDateResponse tempAnswerKudo=new QuestionDateResponse();
-            tempAnswerKudo.setQuestionId(answerUserKudo.getQuestion().getId());
-            tempAnswerKudo.setCreatedOn(answerUserKudo.getCreatedOn());
-
-            question.add(tempAnswerKudo);
-        }
-
-        return question;
+    public Page<QuestionUserKudo> findByUserId(Long userId, int currentPage, int noOfElemPerPage) {
+        return theQuestionUserKudoDAO.findByUser(userId, PageRequest.of(currentPage,noOfElemPerPage,
+                Sort.by(Sort.Direction.DESC,"createdOn")));
     }
 
     @Override

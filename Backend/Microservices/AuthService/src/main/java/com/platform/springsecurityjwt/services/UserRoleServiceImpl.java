@@ -8,6 +8,9 @@ import com.platform.springsecurityjwt.models.id.UserRoleId;
 import com.platform.springsecurityjwt.util.response.RoleResponse;
 import com.platform.springsecurityjwt.util.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,23 +30,13 @@ public class UserRoleServiceImpl implements UserRoleService{
     }
 
     @Override
-    public List<UserResponse> findByRoleId(Long roleId) {
-        List<UserRole> userRoles;
+    public Page<UserRole> findByRoleId(Long roleId, int currentPage, int noOfElemPerPage) {
         try {
-            userRoles = theUserRoleDAO.findByRoleId(roleId);
+            return theUserRoleDAO.findByRoleId(roleId,(Pageable) PageRequest.of(currentPage,noOfElemPerPage));
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        List<UserResponse> userResponses= new ArrayList<>();
-        for(UserRole userRole: userRoles){
-            UserResponse tmpUserResponse= new UserResponse();
-            tmpUserResponse.setUserId(userRole.getUser().getId());
-
-            userResponses.add(tmpUserResponse);
-        }
-
-        return userResponses;
     }
 
     @Override

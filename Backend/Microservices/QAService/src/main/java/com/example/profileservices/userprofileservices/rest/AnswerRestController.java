@@ -1,9 +1,14 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedAnswers;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.Answer;
 import com.example.profileservices.userprofileservices.services.AnswerService;
+import com.example.profileservices.userprofileservices.util.decorater.AnswerPageDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +22,37 @@ public class AnswerRestController {
     @Autowired
     private AnswerService theAnswerService;
 
-    @GetMapping("/questions/{questionId}/answers")
-    private List<Answer> findByQuestionId(@PathVariable Long questionId){
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
+    @GetMapping("/questions/{questionId}/answers/{currentPage}/{noOfElemPerPage}")
+    private AnswerPageDecorator findByQuestionId(@PathVariable Long questionId, @RequestHeader (name="Authorization") String jwt,
+                                                        @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            return theAnswerService.findByQuestionId(questionId);
+            Page<Answer> theAnswers= theAnswerService.findByQuestionId(questionId,currentPage,noOfElemPerPage);
+            List<UserConvertedAnswers> answersWithUser =theUserServiceCaller.addUserToAnswer(theAnswers.getContent(),jwt);
+            AnswerPageDecorator decorator= AnswerPageDecorator.builder()
+                    .theUserConvertedAnswers(answersWithUser)
+                    .number(theAnswers.getNumber())
+                    .pageable(theAnswers.getPageable())
+                    .size(theAnswers.getSize())
+                    .sort(theAnswers.getSort())
+                    .totalElements(theAnswers.getTotalElements())
+                    .totalPages(theAnswers.getTotalPages())
+                    .build();
+
+            return decorator;
         }
         catch (Exception e){
             throw new ApiRequestException("Something Went Wrong!!");
         }
     }
 
-    @GetMapping("/users/{userId}/answers")
-    private List<Answer> findByUserId(@PathVariable Long userId){
+    @GetMapping("/users/{userId}/answers/{currentPage}/{noOfElemPerPage}")
+    private Page<Answer> findByUserId(@PathVariable Long userId, @RequestHeader (name="Authorization") String jwt,
+                                      @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
         try{
-            return theAnswerService.findByUserId(userId);
+            return theAnswerService.findByUserId(userId,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException("Something Went Wrong!!");

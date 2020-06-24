@@ -1,18 +1,23 @@
 package com.example.profileservices.userprofileservices.rest;
 
+import com.example.profileservices.userprofileservices.communication.UserServiceCaller;
+import com.example.profileservices.userprofileservices.communication.response.UserConvertedUserDateResponse;
 import com.example.profileservices.userprofileservices.exception.ApiRequestException;
 import com.example.profileservices.userprofileservices.models.AnswerSeen;
 import com.example.profileservices.userprofileservices.services.AnswerSeenService;
+import com.example.profileservices.userprofileservices.util.decorater.AnswerDateDecorator;
+import com.example.profileservices.userprofileservices.util.decorater.UserDateDecorator;
 import com.example.profileservices.userprofileservices.util.response.AnswerDateResponse;
 import com.example.profileservices.userprofileservices.util.response.AnswerDateResponseWrapper;
 import com.example.profileservices.userprofileservices.util.response.UserDateResponse;
-import com.example.profileservices.userprofileservices.util.response.UserDateResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,32 +26,73 @@ public class AnswerSeenRestController {
     @Autowired
     private AnswerSeenService theAnswerSeenService;
 
-    @GetMapping("/{id}")
-    private UserDateResponseWrapper findByAnswerId(@PathVariable Long id){
-        List<UserDateResponse> result;
+    @Autowired
+    private UserServiceCaller theUserServiceCaller;
+
+    @GetMapping("/{id}/{currentPage}/{noOfElemPerPage}")
+    private UserDateDecorator findByAnswerId(@PathVariable Long id,@RequestHeader (name="Authorization") String jwt,
+                                                               @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
+        Page<AnswerSeen> tmpAns;
         try{
-            result=theAnswerSeenService.findByAnswerId(id);
+            tmpAns=theAnswerSeenService.findByAnswerId(id,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        UserDateResponseWrapper userDateResponseWrapper = new UserDateResponseWrapper();
-        userDateResponseWrapper.setUserDateResponse(result);
-        return userDateResponseWrapper;
+
+        List<AnswerSeen> result=tmpAns.getContent();
+        List<UserDateResponse> userAns= new ArrayList<>();
+        for(AnswerSeen val: result){
+            UserDateResponse tempUserDateResponse = new UserDateResponse();
+            tempUserDateResponse.setUserId(val.getUser());
+            tempUserDateResponse.setCreatedOn(val.getCreatedOn());
+
+            userAns.add(tempUserDateResponse);
+        }
+        List<UserConvertedUserDateResponse> finalAns= theUserServiceCaller.addUserToUserDateResponse(userAns,jwt);
+
+        UserDateDecorator decorator= UserDateDecorator.builder()
+                .theUserConvertedUserDateResponses(finalAns)
+                .number(tmpAns.getNumber())
+                .pageable(tmpAns.getPageable())
+                .size(tmpAns.getSize())
+                .sort(tmpAns.getSort())
+                .totalElements(tmpAns.getTotalElements())
+                .totalPages(tmpAns.getTotalPages())
+                .build();
+
+        return decorator;
     }
 
-    @GetMapping("/users/{id}")
-    private AnswerDateResponseWrapper findByUserId(@PathVariable Long id){
-        List<AnswerDateResponse> result;
+    @GetMapping("/users/{id}/{currentPage}/{noOfElemPerPage}")
+    private AnswerDateDecorator findByUserId(@PathVariable Long id, @PathVariable int currentPage, @PathVariable int noOfElemPerPage){
+        Page<AnswerSeen> result;
         try{
-            result= theAnswerSeenService.findByUserId(id);
+            result= theAnswerSeenService.findByUserId(id,currentPage,noOfElemPerPage);
         }
         catch (Exception e){
             throw new ApiRequestException(e.getMessage());
         }
-        AnswerDateResponseWrapper answerDateResponseWrapper = new AnswerDateResponseWrapper();
-        answerDateResponseWrapper.setAnswerDateResponse(result);
-        return answerDateResponseWrapper;
+
+        List<AnswerDateResponse> answer= new ArrayList<>();
+        for(AnswerSeen answerSeen: result.getContent()){
+            AnswerDateResponse tempAnswerDateResponse =new AnswerDateResponse();
+            tempAnswerDateResponse.setAnswerId(answerSeen.getAnswer().getId());
+            tempAnswerDateResponse.setCreatedOn(answerSeen.getCreatedOn());
+
+            answer.add(tempAnswerDateResponse);
+        }
+
+        AnswerDateDecorator decorator= AnswerDateDecorator.builder()
+                .theAnswerDateResponses(answer)
+                .number(result.getNumber())
+                .pageable(result.getPageable())
+                .size(result.getSize())
+                .sort(result.getSort())
+                .totalElements(result.getTotalElements())
+                .totalPages(result.getTotalPages())
+                .build();
+        return decorator;
     }
 
     @PostMapping()

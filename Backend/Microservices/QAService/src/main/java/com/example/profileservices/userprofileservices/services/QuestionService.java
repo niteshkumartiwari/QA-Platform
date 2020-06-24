@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.profileservices.userprofileservices.models.Question;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 public interface QuestionService {
 	void create(Question theQuestion);
 	void update(Question theQuestion);
-	List<Question> findAll();
+	Page<Question> findAll(int currentPage,int noOfElemPerPage);
 	Question findById(Long theId) throws Exception;
 	void deleteById(Long theId);
-	List<Question> findByUserId(Long userId);
+	Page<Question> findByUserId(Long userId,int currentPage,int noOfElemPerPage);
 }
